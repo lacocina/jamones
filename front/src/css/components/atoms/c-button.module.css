@@ -1,0 +1,46 @@
+.c-button {
+  --current-color: var(--global-accent-color);
+  --hover-color: var(--global-accent-color-active);
+  --bg-color: var(--current-color);
+  --bg-color-hover: var(--hover-color);
+  --font-color: white;
+  --font-color-hover: var(--font-color);
+  --button-box-shadow-color: var(--modal-button-box-shadow-color, var(--bd-color-default));
+  --current-box-shadow-size: var(--box-shadow-size-default);
+  --current-box-shadow-y-displacement: var(--box-shadow-y-displacement);
+  --current-box-shadow: var(--current-box-shadow-y-displacement) var(--current-box-shadow-size) 0 var(--button-box-shadow-color);
+  border-radius: var(--border-radius-full);
+  border: var(--border-with-default) solid var(--current-color);
+  background-color: var(--bg-color);
+  box-shadow: var(--current-box-shadow);
+  transition: var(--motion-duration);
+  color: var(--font-color);
+  font-size: var(--font-size-default);
+  font-weight: var(--font-weight-bold);
+  padding: var(--spacing-rem-sm) var(--spacing-lg);
+  min-width: 10rem;
+  justify-self: end;
+  margin-bottom: var(--current-box-shadow-size);
+  margin-right: var(--current-box-shadow-y-displacement);
+}
+.c-button:hover, .c-button:focus, .c-button:focus-visible {
+  --bg-color: var(--hover-color);
+  border-color: var(--bg-color-hover);
+  color: var(--font-color-hover);
+  outline: none;
+}
+.c-button:disabled {
+  --current-color: var(--bg-color-disabled);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+.secondary {
+  --bg-color: white;
+  --font-color: var(--current-color);
+  --hover-color: var(--global-accent-color-softest);
+  --font-color-hover: var(--current-color);
+  --bg-color-hover: var(--current-color);
+}
+
+/*# sourceMappingURL=c-button.module.css.map */

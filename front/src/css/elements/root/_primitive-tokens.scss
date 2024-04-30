@@ -1,0 +1,79 @@
+@use "../../settings/base/s-colors";
+
+:root {
+  --dimension-core:     16;
+
+  --proportion-xxxs:    .125;
+  --proportion-xxs:     .25;
+  --proportion-xs:      .5;
+  --proportion-sm:      .75;
+  --proportion-md:      1;
+  --proportion-lg:      1.25;
+  --proportion-xl:      2;
+  --proportion-xxl:     3;
+  --proportion-xxxl:    4;
+
+  --spacing-md:         calc(var(--dimension-core) * 1px);                      /* 16px */
+  --spacing-xxxs:        calc(var(--spacing-md)   *  var(--proportion-xxxs));   /* 2px  */
+  --spacing-xxs:        calc(var(--spacing-md)   *  var(--proportion-xxs));     /* 4px  */
+  --spacing-xs:         calc(var(--spacing-md)   *  var(--proportion-xs));      /* 8px  */
+  --spacing-sm:         calc(var(--spacing-md)   *  var(--proportion-sm));      /* 12px */
+  --spacing-lg:         calc(var(--spacing-md)   *  var(--proportion-lg));      /* 20px */
+  --spacing-xl:         calc(var(--spacing-md)   *  var(--proportion-xl));      /* 32px */
+  --spacing-xxl:        calc(var(--spacing-md)   *  var(--proportion-xxl));     /* 48px */
+  --spacing-xxxl:       calc(var(--spacing-md)   *  var(--proportion-xxxl));    /* 64px */
+  --spacing-null:       0 ;
+
+  --spacing-rem-xxxs:    calc(var(--proportion-xxxs) * 1rem);                   /* 0.125rem */
+  --spacing-rem-xxs:    calc(var(--proportion-xxs) * 1rem);                     /* 0.25rem */
+  --spacing-rem-xs:     calc(var(--proportion-xs) * 1rem);                      /* 0.5rem */
+  --spacing-rem-sm:     calc(var(--proportion-sm) * 1rem);                      /* 0.75rem */
+  --spacing-rem-md:     calc(var(--proportion-md) * 1rem);                      /* 1rem */
+  --spacing-rem-lg:     calc(var(--proportion-lg) * 1rem);                      /* 1.25rem */
+  --spacing-rem-xl:     calc(var(--proportion-xl) * 1rem);                      /* 2rem */
+  --spacing-rem-xxl:    calc(var(--proportion-xxl) * 1rem);                     /* 3rem */
+  --spacing-rem-xxxl:   calc(var(--proportion-xxxl) * 1rem);                    /* 4rem */
+
+  --border-radius-core:       8px;
+  --border-radius-small:      calc(var(--border-radius-core) / 2);
+  --border-radius-full:       1000px;
+
+  --border-with-core:         3px;
+  --border-with-small:        3px;
+
+  --box-shadow-core:          10px;
+
+  --font-size-100:            0.875rem;
+  --font-size-200:            1rem;
+  --font-size-300:            1.5rem;
+  --font-size-400:            2rem;
+
+  --font-family:              'Quicksand', sans-serif;
+
+  --font-weight-400:          400;
+  --font-weight-700:          700;
+
+  --transition-duration-500:  .3s;
+
+  --color-gray-100:                #F7F9FF;
+  --color-gray-200:                #DEE1ED;
+  --color-gray-300:                #BFC5D9;
+  --color-gray-500:                #808BB2;
+  --color-gray-700:                #242A42;
+  --color-gray-700-rgb:            #{s-colors.$s-color-gray-700-rgb};
+
+  --color-brand-primary-100:       #EFFBFB;
+  --color-brand-primary-500:       #36C9C9;
+  --color-brand-primary-600:       #31B5B5;
+
+  --color-brand-ham:               #D73838;
+  --color-brand-cheese:            #EBBE4B;
+
+  --color-feedback-success:        #A1C181;
+  --color-feedback-warn:           #FCCA46;
+  --color-feedback-error:          #EC9352;
+
+  --color-status-opened:           #66C408;
+  --color-status-on-the-way:       #C408BC;
+  --color-status-pay-pending:      #EC9352;
+}

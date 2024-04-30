@@ -1,0 +1,53 @@
+.o-inset {
+  --o-inset-current-size: var(--spacing-md);
+  padding: var(--o-inset-current-size);
+}
+
+.null {
+  --o-inset-current-size: var(--spacing-null);
+}
+
+.xxs {
+  --o-inset-current-size: var(--spacing-xxs);
+}
+
+.xs {
+  --o-inset-current-size: var(--spacing-xs);
+}
+
+.sm {
+  --o-inset-current-size: var(--spacing-sm);
+}
+
+.lg {
+  --o-inset-current-size: var(--spacing-lg);
+}
+
+.xl {
+  --o-inset-current-size: var(--spacing-xl);
+}
+
+.xxl {
+  --o-inset-current-size: var(--spacing-xxl);
+}
+
+.xxxl {
+  --o-inset-current-size: var(--spacing-xxxl);
+}
+
+.squish {
+  padding-top: calc(var(--o-inset-current-size) / 2);
+  padding-bottom: calc(var(--o-inset-current-size) / 2);
+}
+
+.stretch {
+  padding-left: calc(var(--o-inset-current-size) / 2);
+  padding-right: calc(var(--o-inset-current-size) / 2);
+}
+
+.section {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/*# sourceMappingURL=o-inset.module.css.map */

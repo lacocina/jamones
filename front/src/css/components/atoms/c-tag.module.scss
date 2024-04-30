@@ -1,0 +1,16 @@
+.c-tag {
+  --tag-current-color: var(--bg-color-feedback-success);
+
+  font-size: var(--font-size-small);
+  background-color: var(--tag-current-color);
+  padding: var(--spacing-rem-xxxs) var(--spacing-sm);
+  border-radius: var(--border-radius-full);
+
+  display: inline-block;
+  text-transform: uppercase;
+  color: white;
+}
+
+.pending {
+  --tag-current-color: var(--bg-color-disabled);
+}

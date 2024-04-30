@@ -1,0 +1,17 @@
+.c-modal {
+  --modal-button-box-shadow-color: var(--bd-color-dark);
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  display: grid;
+  width: 400px;
+  row-gap: var(--spacing-rem-sm);
+}
+
+.container {
+  padding: var(--spacing-rem-xl) var(--spacing-lg);
+  background-color: white;
+  width: 100%;
+}
+
+/*# sourceMappingURL=c-modal.module.css.map */

@@ -1,0 +1,32 @@
+.o-stack {
+  display: grid;
+  --o-stack-current-size: var(--spacing-rem-md);
+  row-gap: var(--o-stack-current-size);
+}
+
+.xxs {
+  --o-stack-current-size: var(--spacing-xxs);
+  composes: o-stack;
+}
+
+.xs {
+  --o-stack-current-size: var(--spacing-xs);
+  composes: o-stack;
+}
+
+.sm {
+  --o-stack-current-size: var(--spacing-sm);
+  composes: o-stack;
+}
+
+.md {
+  --o-stack-current-size: var(--spacing-md);
+  composes: o-stack;
+}
+
+.xl {
+  --o-stack-current-size: var(--spacing-xl);
+  composes: o-stack;
+}
+
+/*# sourceMappingURL=o-stack.module.css.map */

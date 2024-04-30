@@ -1,0 +1,33 @@
+.c-shadow-container {
+  --shadow-container-color: var(--product-color, var(--bd-color-default));
+  --shadow-container-border-radius: var(--border-radius-default);
+
+  --current-box-shadow-size: var(--box-shadow-size-default);
+  --current-box-shadow-y-displacement: var(--box-shadow-y-displacement);
+  --current-box-shadow: var(--current-box-shadow-y-displacement) var(--current-box-shadow-size) 0 var(--shadow-container-color);
+
+  padding-right: var(--current-box-shadow-size);
+  padding-bottom: var(--current-box-shadow-size);
+}
+
+.default-color {
+  --shadow-container-color: var(--bd-color-default);
+}
+
+.dark-color {
+  --shadow-container-color: var(--bd-color-dark);
+}
+
+.only-bottom {
+  --current-box-shadow-y-displacement: 0;
+  --shadow-container-border-radius: 0;
+
+  padding-right: 0;
+}
+
+.main {
+  box-shadow: var(--current-box-shadow);
+  border-radius: var(--shadow-container-border-radius);
+  overflow: hidden;
+}
+

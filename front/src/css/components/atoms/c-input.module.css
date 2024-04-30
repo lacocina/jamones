@@ -1,0 +1,45 @@
+.c-input {
+  --c-input-bd-color: var(--bd-color-default);
+  --c-input-bd-with: var(--border-with-light);
+  --c-input-border-radius: var(--border-radius-light);
+  --c-input-field-font-size: var(--font-size-default);
+  --c-input-unity-font-size: var(--font-size-small);
+  --c-input-padding-x: var(--spacing-md);
+  --c-input-padding-y: var(--spacing-sm);
+  font-size: var(--font-size-small);
+}
+
+.field-wrapper {
+  display: block;
+  composes: relative from "../../utilities/u-position.module.css";
+}
+
+.field {
+  font-family: var(--font-family-default);
+  font-size: var(--c-input-field-font-size);
+  color: var(--font-color-default);
+  font-weight: var(--font-weight-bold);
+  border: var(--c-input-bd-with) var(--c-input-bd-color) solid;
+  border-radius: var(--c-input-border-radius);
+  padding: var(--c-input-padding-y) var(--c-input-padding-x);
+  composes: relative-z1 from "../../utilities/u-position.module.css";
+  width: 100%;
+}
+.field:focus-visible {
+  outline-color: var(--global-accent-color);
+}
+
+.unity {
+  font-size: var(--c-input-unity-font-size);
+  color: var(--font-color-default);
+  padding-right: var(--c-input-padding-x);
+  composes: right-center from "../../utilities/u-position.module.css";
+}
+
+.big {
+  --c-input-field-font-size: var(--font-size-big);
+  --c-input-unity-font-size: var(--font-size-default);
+  --c-input-padding-x: var(--spacing-lg);
+}
+
+/*# sourceMappingURL=c-input.module.css.map */

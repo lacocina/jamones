@@ -1,0 +1,23 @@
+@use "../tools/current-size";
+
+.o-inset {
+  --o-inset-current-size: var(--spacing-md);
+  padding: var(--o-inset-current-size);
+}
+
+@include current-size.t-object-current-size('o-inset', ('xs', 'lg'));
+
+.squish {
+  padding-top: calc(var(--o-inset-current-size) / 2);
+  padding-bottom: calc(var(--o-inset-current-size) / 2);
+}
+
+.stretch {
+  padding-left: calc(var(--o-inset-current-size) / 2);
+  padding-right: calc(var(--o-inset-current-size) / 2);
+}
+
+.section {
+  padding-left: 0;
+  padding-right: 0;
+}

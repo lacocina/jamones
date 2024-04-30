@@ -1,0 +1,14 @@
+@use "../settings/base/s-spacing.scss" as spacing;
+
+@mixin t-object-current-size($prefix, $list-sizes) {
+  @each $size-key in $list-sizes {
+    @if index(spacing.$s-map-spacing-names, $size-key) {
+      .#{$size-key} {
+        --#{$prefix}-current-size: var(--spacing-#{$size-key});
+        @content
+      }
+    } @else {
+      @error '"#{$size-key}" no es uno de los códigos de spacing'
+    }
+  }
+}

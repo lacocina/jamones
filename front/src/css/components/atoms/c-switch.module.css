@@ -1,0 +1,47 @@
+.c-switch {
+  --switch-padding: var(--spacing-xxs);
+  --switch-ball-size: var(--spacing-lg);
+  --switch-ball-space: calc(var(--switch-ball-size) * 2);
+  --switch-with: calc(var(--switch-ball-space) + calc(var(--switch-padding) * 2));
+  padding: var(--switch-padding);
+  width: var(--switch-with);
+  background-color: var(--bg-color-disabled);
+  transition: var(--motion-duration);
+  border-radius: var(--border-radius-full);
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+.c-switch:has(input:checked) {
+  background-color: var(--bg-color-feedback-success);
+}
+.c-switch:has(input:checked) .ball {
+  margin-left: var(--switch-ball-size);
+}
+.c-switch:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.c-switch input {
+  position: absolute;
+  height: 0;
+  width: 0;
+  border: 0;
+  outline: none;
+  text-indent: -9999em;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ball {
+  width: var(--switch-ball-size);
+  transition: var(--motion-duration);
+  border-radius: var(--border-radius-full);
+  margin-left: 0;
+  display: block;
+  content: "";
+  aspect-ratio: 1/1;
+  background-color: white;
+}
+
+/*# sourceMappingURL=c-switch.module.css.map */

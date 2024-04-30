@@ -1,0 +1,27 @@
+.ham {
+    --product-color: var(--color-brand-ham);
+}
+
+.cheese {
+    --product-color: var(--color-brand-cheese);
+}
+
+.font-product {
+    color: var(--product-color, var(--font-color-default));
+}
+
+.font-error {
+    color: var(--font-color-error);
+}
+
+.font-softest {
+    color: var(--font-color-softest);
+}
+
+.font-soft {
+    color: var(--font-color-soft);
+}
+
+.default {
+    color: var(--font-color-default);
+}

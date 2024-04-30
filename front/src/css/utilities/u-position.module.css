@@ -1,0 +1,20 @@
+.relative {
+    position: relative;
+}
+
+.relative-z1 {
+    composes: relative;
+    z-index: 1;
+}
+
+.absolute-z2 {
+    position: absolute;
+    z-index: 2;
+}
+
+.right-center {
+    composes: absolute-z2;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}

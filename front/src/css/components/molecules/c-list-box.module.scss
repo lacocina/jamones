@@ -1,0 +1,36 @@
+.c-list-box {
+  --current-color: var(--shadow-container-color, var(--bd-color-default));
+  --current-border-radius: var(--shadow-container-border-radius, var(--border-radius-default));
+
+  border: var(--current-color) var(--border-with-default) solid;
+  border-radius: var(--current-border-radius);
+  overflow: hidden;
+}
+
+.title {
+  padding-right: var(--box-shadow-y-displacement);
+}
+
+.item {
+  padding: var(--spacing-rem-md) var(--spacing-lg);
+
+  &:is(button) {
+    border: none;
+    background: none;
+    outline-color: transparent;
+    width: 100%;
+    text-align: left;
+  }
+
+  &:is(a, button) {
+    transition: var(--motion-duration);
+    &:hover {
+      background-color: var(--bg-color-gray-softest);
+    }
+  }
+
+
+  &:not(:last-child) {
+    border-bottom: var(--current-color) var(--border-with-default) solid;
+  }
+}

@@ -1,0 +1,28 @@
+.light {
+  font-weight: var(--font-weight-normal);
+}
+
+.bold {
+  font-weight: var(--font-weight-bold);
+}
+
+.size-small {
+  font-size: var(--font-size-small);
+}
+
+.size-default {
+  font-size: var(--font-size-default);
+}
+
+.size-big {
+  font-size: var(--font-size-big);
+}
+
+.size-biggest {
+  font-size: var(--font-size-biggest);
+}
+
+.default {
+  font-size: var(--font-size-default);
+  font-weight: var(--body-font-weight);
+}

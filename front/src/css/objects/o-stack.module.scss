@@ -1,0 +1,12 @@
+@use "../settings/base/s-spacing.scss" as spacing;
+@use "../tools/current-size";
+
+.o-stack {
+  display: grid;
+  --o-stack-current-size: var(--spacing-rem-md);
+  row-gap: var(--o-stack-current-size);
+}
+
+@include current-size.t-object-current-size('o-stack', ('xxs', 'xs', 'sm', 'md', 'xl')) {
+  composes: o-stack;
+}

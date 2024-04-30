@@ -1,0 +1,35 @@
+.o-flex {
+    display: flex;
+    gap: var(--spacing-rem-xs);
+}
+
+.align-center {
+    align-items: center;
+}
+
+.between-center {
+    composes: o-flex align-center;
+    justify-content: space-between;
+}
+
+.start-center {
+    composes: o-flex align-center;
+    justify-content: flex-start;
+}
+
+.end-center {
+    composes: o-flex align-center;
+    justify-content: flex-end;
+}
+
+.between-start {
+    composes: o-flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.between-end {
+    composes: o-flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}

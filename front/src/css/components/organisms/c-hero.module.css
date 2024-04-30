@@ -1,0 +1,58 @@
+.hero {
+  --hero-x-padding: var(--container-x-padding);
+  --hero-top-padding: var(--spacing-rem-lg);
+  position: relative;
+  color: white;
+  aspect-ratio: 5/3;
+  display: grid;
+}
+
+.is-header {
+  --hero-top-padding: var(--container-top-padding);
+}
+
+.inactive:not(:hover) img {
+  filter: saturate(0) blur(2px);
+}
+
+.container {
+  background-color: var(--bg-color-overlay-soft);
+  display: grid;
+  align-content: space-between;
+  position: relative;
+  z-index: 1;
+  padding: var(--hero-top-padding) var(--hero-x-padding) var(--spacing-rem-lg);
+}
+
+.back {
+  border-radius: var(--border-radius-full);
+  transition: var(--motion-duration);
+  background-color: rgba(255, 255, 255, 0.15);
+  width: 3rem;
+  aspect-ratio: 1/1;
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  padding-top: 1px;
+  padding-right: 2px;
+}
+.back:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.img-wrapper {
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+}
+.img-wrapper img {
+  transition: var(--motion-duration);
+  object-fit: cover;
+  height: 100%;
+  object-position: center center;
+  width: 100%;
+}
+
+/*# sourceMappingURL=c-hero.module.css.map */

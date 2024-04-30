@@ -1,0 +1,16 @@
+.c-banner {
+  border-top: var(--bd-color-default) var(--border-with-default) solid;
+  display: grid;
+  row-gap: var(--spacing-rem-md);
+}
+
+.soft {
+  background-color: var(--bg-color-gray-softest);
+}
+
+.reverse-border {
+  border-top: none;
+  border-bottom: var(--bd-color-default) var(--border-with-default) solid;
+}
+
+/*# sourceMappingURL=c-banner.module.css.map */

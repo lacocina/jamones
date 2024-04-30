@@ -1,0 +1,64 @@
+@use "../settings/base/s-colors";
+
+:is(h1, h2, h3, h4, h5, h6) {
+  font-size: var(--font-size-default);
+  margin: 0;
+  line-height: 1.25;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a,
+button {
+  font-family: inherit;
+  &:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+b {
+  font-weight: var(--font-weight-bold);
+}
+
+p {
+  margin: 0;
+}
+
+body {
+  font-family: var(--body-font-family);
+  font-weight: var(--body-font-weight);
+  color: var(--body-font-color);
+  background-color: var(--body-bgc-color);
+}
+
+img {
+  max-width: 100%;
+}
+
+figure {
+  margin: 0;
+}
+
+:where(dialog) {
+  position: fixed;
+}
+
+::backdrop {
+  --backdrop-bg-color: #{s-colors.$s-color-gray-700-rgb};
+
+  backdrop-filter: blur(1.5px);
+  background-color: rgba(var(--backdrop-bg-color), .8);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}
