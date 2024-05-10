@@ -3,14 +3,14 @@ import { getDBInstance } from "../db/db.ts";
 
 export async function getCustomers() {
     const db = await getDBInstance()
-    const customers = await db.query('SELECT id, name, last_name, email, phone from jamones.customer')
+    const customers = await db.query('SELECT id, name, last_name, customer_alias from jamones.customer')
     return customers.rows
 }
 
 export async function getCustomer(req, reply) {
     const db = await getDBInstance()
     const id = req.params.id
-    const customers = await db.query('SELECT id, name, last_name, email, phone from jamones.customer where id = $1', [id])
+    const customers = await db.query('SELECT id, name, last_name, customer_alias from jamones.customer where id = $1', [id])
     return customers.rows[0]
 }
 
@@ -22,8 +22,8 @@ export async function createCustomer(req, reply) {
     if (newCustomer?.name) {
         const db = await getDBInstance()
         const customers = await db.query(
-            'INSERT INTO jamones.customer (name, last_name, email, phone) values ($1, $2, $3, $4)',
-            [newCustomer.name, newCustomer.last_name, newCustomer.email, newCustomer.phone]
+            'INSERT INTO jamones.customer (name, last_name) values ($1, $2)',
+            [newCustomer.name, newCustomer.last_name]
         )
         return customers.rows
     }

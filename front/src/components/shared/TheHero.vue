@@ -33,7 +33,7 @@
 
 <script setup lang="tsx">
 import { computed, useSlots } from "vue";
-import { RouterLink, useRoute } from "vue-router";
+import { RouterLink, useRoute, RouteLocationNamedRaw } from "vue-router";
 import { PackageStatusOptions } from "../../types/PackageStatus.ts";
 
 import ShadowContainer from "@components/shared/ShadowContainer.vue";
@@ -49,7 +49,7 @@ const route = useRoute()
 const isHome = route.name === 'home'
 interface Props {
   inactive?: boolean
-  to?: string
+  to?: RouteLocationNamedRaw
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -62,7 +62,7 @@ const slots = useSlots()
 
 const MainComponent = computed(() => {
   if (!!props.to) {
-    return <RouterLink to={{ name: props.to, params: { packageId: 2 } }}>{slots.default ? slots.default() : null}</RouterLink>
+    return <RouterLink to={ props.to }>{slots.default ? slots.default() : null}</RouterLink>
   }
   return <header>{slots.default ? slots.default() : null}</header>
 })

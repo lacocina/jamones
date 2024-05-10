@@ -46,7 +46,7 @@ const customers = reactive<Customer[]>([])
 
 const { open } = useOverlay()
 
-async function editCustomer(customer) {
+async function editCustomer(customer: Customer) {
   try {
     const response = await open(<CustomerDialog customer-name={customer.name}/>)
     console.log('editCustomer: ', response)
@@ -75,15 +75,6 @@ async function fetchCustomers () {
   } catch (e) {
     console.error(e)
   }
-}
-
-async function saveCustomer (value) {
-  // const { data } = await api.post('/customers', { name: value })
-  console.log('saveCustomer: ', value)
-}
-async function createCustomer (value) {
-  const { data } = await api.post('/customers', { name: value })
-  console.log('createCustomer: ', data)
 }
 
 onMounted(() => fetchCustomers())
