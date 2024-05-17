@@ -5,17 +5,17 @@
     <the-hero :to="{ name: 'package', params: { packageId: 22 } }"/>
 
     <list-box default-color>
-      <router-link v-for="order in previousOrders" :key="order.id"
+      <router-link v-for="order in previousPackages" :key="order.id"
                    :to="{ name: 'package', params: { packageId: order.id } }"
                    :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div>
-          <h2>{{ order.date_received }}</h2>
+          <h2>{{ format(order.dateReceived, 'LLLL yyyy', { locale: es } ) }}</h2>
           <div :class="textCSSM.sizeSmall">
             <span :class="[colorCSSM.fontProduct, colorCSSM.ham]">
-              {{ order.shipping_cost }}€
+              {{ order.shippingCost }}€
             </span>
             <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-              - {{ order.price }}€
+              - {{ order.hamPrice }}€
             </span>
           </div>
         </div>
@@ -37,7 +37,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import { useRouter } from "vue-router";
+
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
+
 import { api } from "../services/api.ts";
 
 import TheHero from "@components/shared/TheHero.vue";
@@ -50,15 +55,17 @@ import cListBoxCSSM from '@css/components/molecules/c-list-box.module.css';
 import textCSSM from "@css/utilities/text.module.css";
 import colorCSSM from "@css/utilities/colors.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
-import { ref } from "vue";
+import {Package} from "../types/Package.ts";
 
 const router = useRouter()
-const previousOrders = ref([])
+const currentPackage = ref<Package>()
+const previousPackages = ref<Package[]>([])
 
 async function fetchPackages() {
   try {
     const { data } = await api.get('/packages')
-    previousOrders.value = data.filter((item: any) => item.opened === false)
+    previousPackages.value = data.filter((item: Package) => !!item.dateClosing)
+    currentPackage.value = data.find((item: Package) => !(!!item.dateClosing))
   } catch (e) {
     console.error(e)
   }

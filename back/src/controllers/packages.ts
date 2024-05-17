@@ -1,10 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { getDBInstance } from "../db/db.ts";
+import camelcaseKeys from "camelcase-keys";
 
 export async function getAllPackages() {
     const db = await getDBInstance()
     const customers = await db.query('SELECT * from jamones.package')
-    return customers.rows
+    return camelcaseKeys(customers.rows)
 }
 
 export async function getCurrentPackage() {

@@ -3,5 +3,5 @@ export interface Customer {
     active: boolean
     name: string
     alias?: string
-    pastOrders: number[]
+    pastOrders?: number[]
 }
