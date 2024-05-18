@@ -16,8 +16,6 @@ export async function getCustomer(req, reply) {
 
 export async function createCustomer(req, reply) {
     const newCustomer = req.body
-    // INSERT INTO table_name (column1, column2, column3,etc)
-    // VALUES (value1, value2, value3, etc);
 
     if (newCustomer?.name) {
         const db = await getDBInstance()

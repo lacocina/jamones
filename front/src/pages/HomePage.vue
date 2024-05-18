@@ -2,9 +2,11 @@
 
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
-    <the-hero :to="{ name: 'package', params: { packageId: 22 } }"/>
+    <the-hero
+        v-if="currentPackage"
+        :to="{ name: 'package', params: { packageId: currentPackage.id } }"/>
 
-    <list-box default-color>
+    <list-box v-if="previousPackages.length" default-color>
       <router-link v-for="order in previousPackages" :key="order.id"
                    :to="{ name: 'package', params: { packageId: order.id } }"
                    :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
@@ -63,7 +65,7 @@ const previousPackages = ref<Package[]>([])
 
 async function fetchPackages() {
   try {
-    const { data } = await api.get('/packages')
+    const { data } = await api.get('/packages/list')
     previousPackages.value = data.filter((item: Package) => !!item.dateClosing)
     currentPackage.value = data.find((item: Package) => !(!!item.dateClosing))
   } catch (e) {
