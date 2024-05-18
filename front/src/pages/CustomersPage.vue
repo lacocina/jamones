@@ -3,16 +3,21 @@
 
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
-    <list-box v-if="customers?.length >= 0" title="Listado de clientes" default-color>
-      <button v-for="customer in customers"
-              :key="customer.id" type="button"
-              @click="editCustomer(customer)"
-              :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
-        <h2>{{ customer.name }}</h2>
-        <span class="material-symbols-rounded" :class="colorCSSM.fontSoft">
-          chevron_right
-        </span>
-      </button>
+    <list-box title="Listado de clientes" default-color>
+      <template v-if="customers?.length">
+        <button v-for="customer in customers"
+                :key="customer.id" type="button"
+                @click="editCustomer(customer)"
+                :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
+          <h2>{{ customer.name }}</h2>
+          <span class="material-symbols-rounded" :class="colorCSSM.fontSoft">
+            chevron_right
+          </span>
+        </button>
+      </template>
+      <div :class="[cListBoxCSSM.item, colorCSSM.fontSoft]" v-else>
+        Aún no hay ningún cliente añadido
+      </div>
     </list-box>
 
     <the-button @click="newCustomer()">
