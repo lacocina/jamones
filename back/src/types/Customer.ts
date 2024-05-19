@@ -1,7 +1,6 @@
 export interface Customer {
-    id: number
-    active: boolean
+    customerId: number
     name: string
-    alias?: string
-    pastOrders: number[]
+    lastName?: string
+    customerAlias?: string
 }

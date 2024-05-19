@@ -4,24 +4,23 @@
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
-      <button v-for="customer in customers"
-              :key="customer.id" type="button"
-              @click="editCustomerOrder(customer)"
+      <button v-for="order in packageOrders"
+              :key="order.orderId" type="button"
+              @click="editCustomerOrder(order)"
               :class="[
                   cListBoxCSSM.item,
-                  oFlexCSSM.betweenCenter,
-                  customer.hams > 0 ? '' : colorCSSM.fontSoft
+                  oFlexCSSM.betweenCenter
                   ]">
         <div>
-          <h2>{{ customer.name }}</h2>
-          <div v-if="customer.hams > 0" :class="textCSSM.sizeSmall">
+          <h2>{{ order.name }}</h2>
+          <div v-if="false" :class="textCSSM.sizeSmall">
             <span :class="[textCSSM.light, colorCSSM.fontSoft]">
               Precio aprox: <b>720€</b>
             </span>
           </div>
         </div>
-        <h4 :class="[customer.hams > 0 ? [colorCSSM.fontProduct] : '', textCSSM.sizeBig]">
-          {{ customer.hams }}
+        <h4 :class="[colorCSSM.fontProduct, textCSSM.sizeBig]">
+          3
         </h4>
       </button>
     </list-box>
@@ -53,8 +52,14 @@
 </template>
 
 <script setup lang="tsx">
-import type { Customer } from "../types/Customer.ts";
+import { ref } from "vue";
 import { useOverlay } from "@composables/useOverlay.ts";
+import { useRoute } from "vue-router";
+import { api } from "../services/api.ts";
+import { ResponsePackageDetail } from "../types/ResponsePackageDetail.ts";
+import { PackageOrder } from "../types/PackageOrder.ts";
+import { ClosedModal } from "../types/ClosedModal.ts";
+import type { Customer } from "../types/Customer.ts";
 
 import TheHero from "@components/shared/TheHero.vue";
 import ListBox from "@components/shared/ListBox.vue";
@@ -69,25 +74,17 @@ import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import textCSSM from "@css/utilities/text.module.css";
 import colorCSSM from "@css/utilities/colors.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
-import {ClosedModal} from "../types/ClosedModal.ts";
 
-const customers : Customer[] = [{
-  id: 1,
-  name: 'Teresa',
-  hams: 3
-},{
-  id: 2,
-  name: 'Miquel',
-  hams: 0
-},{
-  id: 3,
-  name: 'Cholo',
-  hams: 1
-}]
-
+const route = useRoute()
 const { open } = useOverlay()
 
-async function editCustomerOrder(customer) {
+const packageOrders = ref<PackageOrder[]>([])
+
+async function editCustomerOrder(order: PackageOrder) {
+  const customer: Customer = {
+    name: order.name,
+    customerId: order.customerId
+  }
   try {
     const response = await open(<CustomerOrderDialog customer={ customer }/>)
     console.log(response)
@@ -97,4 +94,16 @@ async function editCustomerOrder(customer) {
     }
   }
 }
+
+async function fetchPackageDetail() {
+  try {
+    const { data } : { data: ResponsePackageDetail } = await api.get(`packages/${route.params.packageId}`)
+    packageOrders.value = data.orders
+    console.log(data)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+fetchPackageDetail()
 </script>
