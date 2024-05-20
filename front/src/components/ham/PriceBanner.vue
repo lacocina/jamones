@@ -17,6 +17,7 @@ import TheBanner from "@components/shared/TheBanner.vue";
 import PriceDialog from "@components/ham/PriceDialog.vue";
 
 interface Props {
+  packageId: number
   price?: number
 }
 
@@ -29,7 +30,7 @@ const { open } = useOverlay()
 
 async function openDialog() {
   try {
-    const response = await open(<PriceDialog/>)
+    const response = await open(<PriceDialog price={props.price}/>)
     console.log(response)
   } catch (e) {
     if (e !== ClosedModal) {

@@ -1,58 +1,64 @@
 <template>
-  <the-hero/>
+  <template v-if="packageData">
+    <the-hero/>
 
-  <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
+    <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
-    <list-box title="Pedidos de los clientes" description="Jamones" default-color>
-      <button v-for="order in packageOrders"
-              :key="order.orderId" type="button"
-              @click="editCustomerOrder(order)"
-              :class="[
-                  cListBoxCSSM.item,
-                  oFlexCSSM.betweenCenter
-                  ]">
-        <div>
-          <h2>{{ order.name }}</h2>
-          <div v-if="false" :class="textCSSM.sizeSmall">
-            <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-              Precio aprox: <b>720€</b>
-            </span>
+      <list-box title="Pedidos de los clientes" description="Jamones" default-color>
+        <button v-for="order in packageOrders"
+                :key="order.orderId" type="button"
+                @click="editCustomerOrder(order)"
+                :class="[
+                    cListBoxCSSM.item,
+                    oFlexCSSM.betweenCenter
+                    ]">
+          <div>
+            <h2>{{ order.name }}</h2>
+            <div v-if="packageData.hamPrice" :class="textCSSM.sizeSmall">
+              <span :class="[textCSSM.light, colorCSSM.fontSoft]">
+                Precio aprox: <b>{{ packageData.hamPrice * 3 }}€</b>
+              </span>
+            </div>
           </div>
-        </div>
-        <h4 :class="[colorCSSM.fontProduct, textCSSM.sizeBig]">
-          3
-        </h4>
-      </button>
-    </list-box>
+          <h4 :class="[colorCSSM.fontProduct, textCSSM.sizeBig]">
+            3
+          </h4>
+        </button>
+      </list-box>
 
-    <list-box>
-      <div :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
-        <div>
-          <h2>Total jamones</h2>
-          <div :class="textCSSM.sizeSmall">
-            <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-              Total aprox: <b>720€</b>
-            </span>
+      <list-box>
+        <div :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
+          <div>
+            <h2>Total jamones</h2>
+            <div :class="textCSSM.sizeSmall">
+              <span :class="[textCSSM.light, colorCSSM.fontSoft]">
+                Total aprox: <b>720€</b>
+              </span>
+            </div>
           </div>
+          <h4 :class="[textCSSM.sizeBig,colorCSSM.fontProduct]">4</h4>
         </div>
-        <h4 :class="[textCSSM.sizeBig,colorCSSM.fontProduct]">4</h4>
-      </div>
-    </list-box>
+      </list-box>
 
-  </section>
+    </section>
 
-  <price-banner :price="packageData?.hamPrice"/>
+    <price-banner :package-id="packageData.id"
+                  :price="packageData.hamPrice"/>
 
-  <shipping-banner/>
+    <shipping-banner/>
 
-  <the-banner title="¿Ya está todo listo?"
-              button-text="Confirmar pedido"
-              disabled
-              disabled-message="Falta añadir medio jamón"
-              soft>
-    Si ya está todo preparado para pedir puedes continuar para indicar que el pedido está de camino.
-  </the-banner>
+    <the-banner title="¿Ya está todo listo?"
+                button-text="Confirmar pedido"
+                disabled
+                disabled-message="Falta añadir medio jamón"
+                soft>
+      Si ya está todo preparado para pedir puedes continuar para indicar que el pedido está de camino.
+    </the-banner>
+  </template>
 
+  <template else>
+    Loading
+  </template>
 </template>
 
 <script setup lang="tsx">
@@ -107,7 +113,6 @@ async function fetchPackageDetail() {
     const { orders, ...responsePackageData } = data
     packageOrders.value = orders
     packageData.value = responsePackageData
-    console.log(data)
   } catch (e) {
     console.error(e)
   }

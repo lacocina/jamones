@@ -24,13 +24,14 @@ export async function getPackageDetail(req, reply) {
 
     if (packageId) {
         const db = await getDBInstance()
-        const { rows: currentPackage } = await db.query(
+        const { rows: currentPackage } = await db.query<Package>(
             'SELECT ' +
                 'p.date_closing AS "dateClosing", ' +
                 'p.date_confirmed AS "dateConfirmed", ' +
                 'p.date_creation AS "dateCreation", ' +
                 'p.date_received AS "dateReceived", ' +
                 'p.ham_price AS "hamPrice", ' +
+                'p.shipping_cost AS "shippingCost", ' +
                 'p.id, ' +
                 'p.opened ' +
             'FROM ' +
@@ -58,7 +59,12 @@ export async function getPackageDetail(req, reply) {
             [ packageId ]
         )
         if (currentPackage.length) {
-            return { ...currentPackage[0], orders }
+            return {
+                ...currentPackage[0],
+                hamPrice : parseFloat(currentPackage[0].hamPrice),
+                shippingCost : parseFloat(currentPackage[0].shippingCost),
+                orders
+            }
         } else {
             reply.status(404)
             return `No hay ningún paquete con el ID ${ packageId }`

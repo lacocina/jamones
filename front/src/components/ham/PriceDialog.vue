@@ -24,7 +24,13 @@ import DefaultModalContent from "@components/shared/DefaultModalContent.vue";
 import oStackCSSM from '@css/objects/o-stack.module.css';
 import textCSSM from "@css/utilities/text.module.css";
 
-const hamPrice = ref<number>(39)
+interface Props {
+  price?: number
+}
+
+const props = defineProps<Props>()
+
+const hamPrice = ref<number>(props.price || 0)
 const { close } = useOverlay()
 
 function handleConfirm () {

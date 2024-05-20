@@ -17,7 +17,7 @@
               arrow_back_ios_new
             </span>
           </router-link>
-          <order-status :status="PackageStatusOptions.Opened"/>
+          <order-status v-if="status" :status="status"/>
         </div>
         <div>
           <h2 :class="textCSSM.sizeBiggest">Titulo</h2>
@@ -48,6 +48,7 @@ const route = useRoute()
 
 const isHome = route.name === 'home'
 interface Props {
+  status?: PackageStatusOptions
   inactive?: boolean
   to?: RouteLocationNamedRaw
 }
