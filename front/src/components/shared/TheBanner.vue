@@ -21,7 +21,7 @@
       <p :class="textCSSM.light">
         <slot/>
       </p>
-      <p v-if="disabled" :class="colorsCSSM.fontError">
+      <p v-if="disabledMessage" :class="colorsCSSM.fontError">
         {{ disabledMessage }}
       </p>
     </div>
@@ -39,7 +39,6 @@ import cBannerCSSM from "@css/components/molecules/c-banner.module.css";
 import colorsCSSM from "@css/utilities/colors.module.css";
 import textCSSM from "@css/utilities/text.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
-import {computed} from "vue";
 import oStackCSSM from "@css/objects/o-stack.module.css";
 
 
@@ -50,11 +49,13 @@ interface Props {
   soft?: boolean
   price?: string
   symbol?: string
-  disabledMessage?: String
+  disabled?: boolean
+  disabledMessage?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   reverseBorder: false,
+  disabled: false,
   soft: false
 })
 interface Emits {
@@ -65,7 +66,4 @@ const emit = defineEmits<Emits>()
 function onClick() {
   emit('click')
 }
-
-const disabled = computed(() => !!props.disabledMessage)
-
 </script>

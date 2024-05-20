@@ -41,11 +41,15 @@
 
   </section>
 
-  <price-banner/>
+  <price-banner :price="packageData?.hamPrice"/>
 
   <shipping-banner/>
 
-  <the-banner title="¿Ya está todo listo?" button-text="Confirmar pedido" disabled-message="Falta añadir medio jamón" soft>
+  <the-banner title="¿Ya está todo listo?"
+              button-text="Confirmar pedido"
+              disabled
+              disabled-message="Falta añadir medio jamón"
+              soft>
     Si ya está todo preparado para pedir puedes continuar para indicar que el pedido está de camino.
   </the-banner>
 
@@ -57,6 +61,7 @@ import { useOverlay } from "@composables/useOverlay.ts";
 import { useRoute } from "vue-router";
 import { api } from "../services/api.ts";
 import { ResponsePackageDetail } from "../types/ResponsePackageDetail.ts";
+import { Package } from "../types/Package.ts";
 import { PackageOrder } from "../types/PackageOrder.ts";
 import { ClosedModal } from "../types/ClosedModal.ts";
 import type { Customer } from "../types/Customer.ts";
@@ -79,6 +84,7 @@ const route = useRoute()
 const { open } = useOverlay()
 
 const packageOrders = ref<PackageOrder[]>([])
+const packageData = ref<Package>()
 
 async function editCustomerOrder(order: PackageOrder) {
   const customer: Customer = {
@@ -98,7 +104,9 @@ async function editCustomerOrder(order: PackageOrder) {
 async function fetchPackageDetail() {
   try {
     const { data } : { data: ResponsePackageDetail } = await api.get(`packages/${route.params.packageId}`)
-    packageOrders.value = data.orders
+    const { orders, ...responsePackageData } = data
+    packageOrders.value = orders
+    packageData.value = responsePackageData
     console.log(data)
   } catch (e) {
     console.error(e)
