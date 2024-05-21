@@ -19,30 +19,30 @@ import PriceDialog from "@components/ham/PriceDialog.vue";
 
 interface Props {
   packageId: number
-  price?: number
+  modelValue?: number
 }
 
 const props = defineProps<Props>()
 
 interface Emits {
-  (ev: 'update-price', result: number): void
+  (ev: 'update:model-value', result: number): void
 }
 
 const emit = defineEmits<Emits>()
 
-const disabledMessage = computed(() => !!(props.price) ? '' : 'Aún no has añadido el precio del jamón.' )
-const priceLabel = computed(() => !!(props.price) ? `${props.price}€/kg` : '' )
-const buttonLabel = computed(() => !!(props.price) ? 'Cambiar' : 'Añadir' )
+const disabledMessage = computed(() => !!(props.modelValue) ? '' : 'Aún no has añadido el precio del jamón.' )
+const priceLabel = computed(() => !!(props.modelValue) ? `${props.modelValue}€/kg` : '' )
+const buttonLabel = computed(() => !!(props.modelValue) ? 'Cambiar' : 'Añadir' )
 
 const { open } = useOverlay()
 
 async function openDialog() {
   try {
-    const response = await open(<PriceDialog price={props.price}/>)
+    const response = await open(<PriceDialog price={props.modelValue}/>)
     if (response.reason === 'confirm' && response.value) {
       try {
         const { data } = await api.patch(`packages/updateHamPrice/${props.packageId}`, { hamPrice: response.value })
-        emit('update-price', data.hamPrice)
+        emit('update:model-value', data.hamPrice)
       } catch (e) {
         console.error(e)
       }

@@ -8,7 +8,7 @@
 
       <span v-if="unity" ref="unitySpan" :class="cInputCSSM.unity" class="c-input__unity">{{ unity }}</span>
       <input :value="modelValue"
-             @change.prevent="(event) => emit('update:model-value', event.target.valueAsNumber)"
+             @change.prevent="(event) => emit('update:model-value', (event.target as HTMLInputElement)?.valueAsNumber)"
              :class="cInputCSSM.field"
              ref="inputField"
              placeholder="0"

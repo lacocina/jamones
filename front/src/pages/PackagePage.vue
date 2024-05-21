@@ -43,7 +43,7 @@
     </section>
 
     <price-banner :package-id="packageData.id"
-                  :price="packageData.hamPrice"/>
+                  v-model.number="packageData.hamPrice"/>
 
     <shipping-banner :package-id="packageData.id"
                      :price="packageData.shippingCost"/>
