@@ -84,6 +84,23 @@ export async function getCurrentPackage() {
     return customers.rows
 }
 
+export async function updateHamPrice(req, reply) {
+    if (req.params.id && req.body.hamPrice) {
+        try {
+            const db = await getDBInstance()
+            await db.query(`UPDATE jamones.package SET ham_price = ${req.body.hamPrice} ::numeric WHERE id = ${req.params.id}`)
+            const { rows } = await db.query(`SELECT ham_price FROM jamones.package WHERE id = ${req.params.id}`)
+            return { hamPrice: parseFloat(rows[0].ham_price) }
+        } catch (e) {
+            reply.status(500)
+            return 'Error del servidor'
+        }
+    }
+
+    reply.status(400)
+    return 'Falta el ID o el precio del jamón'
+}
+
 export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) => {
 
     app.get('/list', getAllPackages)
@@ -91,6 +108,8 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
     app.get('/:id', (request, reply) => getPackageDetail(request, reply))
 
     app.get('/current', getCurrentPackage)
+
+    app.patch('/updateHamPrice/:id', (request, reply) => updateHamPrice(request, reply))
 
     next()
 }
