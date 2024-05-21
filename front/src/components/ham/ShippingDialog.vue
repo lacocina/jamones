@@ -36,7 +36,7 @@ const { close } = useOverlay()
 function handleConfirm() {
   close({
     reason: 'confirm',
-    shippingPrice: shippingPrice.value
+    value: shippingPrice.value
   })
 }
 </script>

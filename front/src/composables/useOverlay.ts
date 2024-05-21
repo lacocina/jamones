@@ -1,5 +1,4 @@
 import { ref } from 'vue'
-import type { InvoiceCreate } from '@/types/Invoice.ts'
 
 function promiseResolver<Response>() {
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
@@ -22,7 +21,7 @@ const component = ref<any>(null)
 let resolve = (_: any) => {}
 let reject = (_: any) => {}
 
-export function useOverlay<ResponseParent = {}>() {
+export function useOverlay<ResponseParent = { reason: string, value: any }>() {
   const open = async <Response = ResponseParent>(overlayComponent: any): Promise<Response> => {
     component.value = overlayComponent
     visible.value = true
