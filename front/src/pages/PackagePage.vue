@@ -1,6 +1,6 @@
 <template>
   <template v-if="packageData">
-    <the-hero/>
+    <the-hero :status="packageData.status"/>
 
     <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 

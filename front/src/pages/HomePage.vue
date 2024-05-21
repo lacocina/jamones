@@ -4,6 +4,7 @@
 
     <the-hero
         v-if="currentPackage"
+        :status="currentPackage.status"
         :to="{ name: 'package', params: { packageId: currentPackage.id } }"/>
 
     <list-box v-if="previousPackages.length" default-color>

@@ -32,6 +32,7 @@ export async function getPackageDetail(req, reply) {
                 'p.date_received AS "dateReceived", ' +
                 'p.ham_price AS "hamPrice", ' +
                 'p.shipping_cost AS "shippingCost", ' +
+                'p.status, ' +
                 'p.id, ' +
                 'p.opened ' +
             'FROM ' +
@@ -45,6 +46,7 @@ export async function getPackageDetail(req, reply) {
                 'o.id AS "orderId", ' +
                 'o.package_id AS "packageId", ' +
                 'o.customer_id AS "customerId", ' +
+                'o.paid, ' +
                 'c.name AS "name", ' +
                 'c.last_name AS "lastName", ' +
                 'c.customer_alias AS "customerAlias" ' +
