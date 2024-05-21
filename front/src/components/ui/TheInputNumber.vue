@@ -34,7 +34,7 @@ interface Emits {
   (ev: 'update:model-value', result: number): void
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 const inputField = ref(null)
