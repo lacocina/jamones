@@ -24,7 +24,7 @@ import oStackCSSM from '@css/objects/o-stack.module.css';
 import { ref, watch } from "vue";
 
 interface Props {
-  modelValue: number
+  modelValue?: number
   unity?: string
   label?: string
   big?: boolean

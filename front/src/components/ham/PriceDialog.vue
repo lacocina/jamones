@@ -30,13 +30,13 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const hamPrice = ref<number>(props.price || 0)
+const hamPrice = ref(props.price)
 const { close } = useOverlay()
 
 function handleConfirm () {
   close({
     reason: 'confirm',
-    value: hamPrice.value
+    value: hamPrice.value || null
   })
 }
 </script>
