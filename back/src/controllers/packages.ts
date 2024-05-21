@@ -84,13 +84,13 @@ export async function getCurrentPackage() {
     return customers.rows
 }
 
-export async function updateHamPrice(req, reply) {
-    if (req.params.id && req.body.hamPrice) {
+async function updatePackageProperty (req, reply, params: { dbName: string, returnName: string }) {
+    if (req.params.id && req.body[params.returnName]) {
         try {
             const db = await getDBInstance()
-            await db.query(`UPDATE jamones.package SET ham_price = ${req.body.hamPrice} ::numeric WHERE id = ${req.params.id}`)
-            const { rows } = await db.query(`SELECT ham_price FROM jamones.package WHERE id = ${req.params.id}`)
-            return { hamPrice: parseFloat(rows[0].ham_price) }
+            await db.query(`UPDATE jamones.package SET ${params.dbName} = ${req.body[params.returnName]} ::numeric WHERE id = ${req.params.id}`)
+            const { rows } = await db.query(`SELECT ${params.dbName} FROM jamones.package WHERE id = ${req.params.id}`)
+            return { [params.returnName]: parseFloat(rows[0][params.dbName]) }
         } catch (e) {
             reply.status(500)
             return 'Error del servidor'
@@ -99,6 +99,20 @@ export async function updateHamPrice(req, reply) {
 
     reply.status(400)
     return 'Falta el ID o el precio del jamón'
+}
+
+export async function updateHamPrice(req, reply) {
+    return await updatePackageProperty(req, reply, {
+        dbName: 'ham_price',
+        returnName: 'hamPrice'
+    })
+}
+
+export async function updateShippingCost(req, reply) {
+    return await updatePackageProperty(req, reply, {
+        dbName: 'shipping_cost',
+        returnName: 'shippingCost'
+    })
 }
 
 export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) => {
@@ -110,6 +124,8 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
     app.get('/current', getCurrentPackage)
 
     app.patch('/updateHamPrice/:id', (request, reply) => updateHamPrice(request, reply))
+
+    app.patch('/updateShippingCost/:id', (request, reply) => updateShippingCost(request, reply))
 
     next()
 }
