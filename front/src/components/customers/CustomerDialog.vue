@@ -19,7 +19,7 @@ import TheInputText from "@components/ui/TheInputText.vue";
 import DefaultModalContent from "@components/shared/DefaultModalContent.vue";
 
 interface Props {
-  customerName?: String
+  customerName?: string
 }
 
 const props = withDefaults(defineProps<Props>(), { customerName: '' })
@@ -30,7 +30,7 @@ const { close, reject } = useOverlay()
 function handleConfirm() {
   close({
     reason: 'confirm',
-    customerName: props.customerName,
+    value: props.customerName,
   })
 }
 function deleteCustomer() {
