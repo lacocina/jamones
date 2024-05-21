@@ -45,7 +45,8 @@
     <price-banner :package-id="packageData.id"
                   :price="packageData.hamPrice"/>
 
-    <shipping-banner/>
+    <shipping-banner :package-id="packageData.id"
+                     :price="packageData.shippingCost"/>
 
     <the-banner title="¿Ya está todo listo?"
                 button-text="Confirmar pedido"
