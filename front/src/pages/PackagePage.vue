@@ -46,7 +46,7 @@
                   v-model.number="packageData.hamPrice"/>
 
     <shipping-banner :package-id="packageData.id"
-                     :price="packageData.shippingCost"/>
+                     v-model.number="packageData.shippingCost"/>
 
     <the-banner title="¿Ya está todo listo?"
                 button-text="Confirmar pedido"

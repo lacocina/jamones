@@ -14,24 +14,39 @@ import { useOverlay } from "@composables/useOverlay.ts";
 import { ClosedModal } from "../../types/ClosedModal.ts";
 import TheBanner from "@components/shared/TheBanner.vue";
 import ShippingDialog from "@components/ham/ShippingDialog.vue";
+import {api} from "../../services/api.ts";
 
 interface Props {
+  modelValue?: number
   packageId: number
-  price?: number
+}
+interface Emits {
+  (ev: 'update:model-value', result: number): void
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
-const disabledMessage = computed(() => !!(props.price) ? '' : 'Aún no has añadido los gastos de envío.' )
-const priceLabel = computed(() => !!(props.price) ? `${props.price}€` : '' )
-const buttonLabel = computed(() => !!(props.price) ? 'Cambiar' : 'Añadir' )
+const disabledMessage = computed(() => !!(props.modelValue) ? '' : 'Aún no has añadido los gastos de envío.' )
+const priceLabel = computed(() => !!(props.modelValue) ? `${props.modelValue}€` : '' )
+const buttonLabel = computed(() => !!(props.modelValue) ? 'Cambiar' : 'Añadir' )
 
 
 const { open } = useOverlay()
 async function openDialog() {
   try {
-    const response = await open(<ShippingDialog/>)
-    console.log(response)
+    const response = await open(<ShippingDialog price={props.modelValue}/>)
+    if (response.reason === 'confirm' && response.value) {
+      try {
+        const { data } = await api.patch(
+            `packages/updateShippingCost/${props.packageId}`,
+            { shippingCost: response.value }
+        )
+        emit('update:model-value', data.shippingCost)
+      } catch (e) {
+        console.error(e)
+      }
+    }
   } catch (e) {
     if (e !== ClosedModal) {
       console.log('Err')
