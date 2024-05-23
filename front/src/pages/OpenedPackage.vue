@@ -1,44 +1,17 @@
 <template>
 
-  <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
-
-    <list-box title="Pedidos de los clientes" description="Jamones" default-color>
-      <button v-for="order in packageOrders"
-              :key="order.orderId" type="button"
-              @click="editCustomerOrder(order)"
-              :class="[
-                    cListBoxCSSM.item,
-                    oFlexCSSM.betweenCenter
-                    ]">
-        <div>
-          <h2>{{ order.name }}</h2>
-          <div v-if="packageData.hamPrice" :class="textCSSM.sizeSmall">
-              <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-                Precio aprox: <b>{{ packageData.hamPrice * 3 }}€</b>
-              </span>
-          </div>
-        </div>
-        <h4 :class="[colorCSSM.fontProduct, textCSSM.sizeBig]">
-          3
-        </h4>
-      </button>
-    </list-box>
-
-    <list-box>
-      <div :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
-        <div>
-          <h2>Total jamones</h2>
-          <div :class="textCSSM.sizeSmall">
-              <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-                Total aprox: <b>720€</b>
-              </span>
-          </div>
-        </div>
-        <h4 :class="[textCSSM.sizeBig,colorCSSM.fontProduct]">4</h4>
-      </div>
-    </list-box>
-
-  </section>
+  <orders-list :package-orders="packageOrders"
+               :ham-price="packageData.hamPrice"
+               @click-order="editCustomerOrder">
+    <template #subtitle="{ customerId }">
+      Precio aprox: <b>{{ customerId }}</b>
+    </template>
+    <template #value>
+      <b :class="[colorCSSM.fontProduct, textCSSM.sizeBig]">
+        3
+      </b>
+    </template>
+  </orders-list>
 
   <price-banner :package-id="packageData.id"
                 v-model.number="packageData.hamPrice"/>
@@ -56,22 +29,20 @@
 </template>
 
 <script setup lang="tsx">
-import {Package} from "../types/Package.ts";
-import {PackageOrder} from "../types/PackageOrder.ts";
+import {useOverlay} from "@composables/useOverlay.ts";
+import type {Package} from "../types/Package.ts";
+import type {PackageOrder} from "../types/PackageOrder.ts";
+import type {Customer} from "../types/Customer.ts";
+import {ClosedModal} from "../types/ClosedModal.ts";
+
 import PriceBanner from "@components/ham/PriceBanner.vue";
 import ShippingBanner from "@components/ham/ShippingBanner.vue";
 import TheBanner from "@components/shared/TheBanner.vue";
 import CustomerOrderDialog from "@components/ham/CustomerOrderDialog.vue";
-import oSectionCSSM from "@css/objects/o-section.module.css";
-import oStackCSSM from "@css/objects/o-stack.module.css";
-import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
-import oFlexCSSM from "@css/objects/o-flex.module.css";
-import textCSSM from "@css/utilities/text.module.css";
+import OrdersList from "@components/ham/OrdersList.vue";
+
 import colorCSSM from "@css/utilities/colors.module.css";
-import ListBox from "@components/shared/ListBox.vue";
-import type {Customer} from "../types/Customer.ts";
-import {ClosedModal} from "../types/ClosedModal.ts";
-import {useOverlay} from "@composables/useOverlay.ts";
+import textCSSM from "@css/utilities/text.module.css";
 
 const { open } = useOverlay()
 interface Props {
