@@ -5,6 +5,7 @@
 
     <component :is="packageByStatus"
                :packageOrders="packageOrders"
+               @order-update="handleOrderUpdate"
                :packageData="packageData"/>
 
   </template>
@@ -15,7 +16,7 @@
 </template>
 
 <script setup lang="tsx">
-import {markRaw, ref, shallowRef} from "vue";
+import {ref, shallowRef} from "vue";
 import {useRoute} from "vue-router";
 import {api} from "../services/api.ts";
 import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
@@ -48,4 +49,7 @@ async function fetchPackageDetail() {
 
 fetchPackageDetail()
 
+function handleOrderUpdate(order: PackageOrder) {
+  console.log('handleOrderUpdate', order)
+}
 </script>

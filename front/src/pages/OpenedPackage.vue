@@ -52,14 +52,27 @@ interface Props {
 
 defineProps<Props>()
 
+interface Emits {
+  (ev: 'order-update', result: PackageOrder): void
+}
+
+const emit = defineEmits<Emits>()
+
 async function editCustomerOrder(order: PackageOrder) {
   const customer: Customer = {
     name: order.name,
     customerId: order.customerId
   }
   try {
-    const response = await open(<CustomerOrderDialog customer={ customer }/>)
-    console.log(response)
+    const { reason, value } = await open(<CustomerOrderDialog customer={ customer }/>)
+    if (reason === 'confirm') {
+      if (value) {
+        console.log(`Borra líneas del ${order.orderId} y ponle ${value} líneas`)
+      } else {
+        console.log('Borra todos las líneas de la Order ', order.orderId)
+      }
+      emit('order-update', order)
+    }
   } catch (e) {
     if (e !== ClosedModal) {
       console.log('Err')

@@ -11,7 +11,7 @@
               :ham-price="packageData.hamPrice"
               @click-order="viewCustomerOrder">
     <template #subtitle="{ customerId }">
-      <b>{{ customerId }}, 900€ - </b> 3 Jamones
+      <b>{{ customerId }} - 900€ - </b> 3 Jamones
     </template>
     <template #value="{ paid }">
       <b :class="colorCSSM.fontProduct">
@@ -39,7 +39,14 @@ interface Props {
 
 defineProps<Props>()
 
+interface Emits {
+  (ev: 'order-update', result: PackageOrder): void
+}
+
+const emit = defineEmits<Emits>()
+
+
 function viewCustomerOrder(order: PackageOrder) {
-  console.log(order)
+  emit('order-update', order)
 }
 </script>
