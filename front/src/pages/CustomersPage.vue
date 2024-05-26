@@ -6,7 +6,7 @@
     <list-box title="Listado de clientes" default-color>
       <template v-if="customers?.length">
         <button v-for="customer in customers"
-                :key="customer.id" type="button"
+                :key="customer.customerId" type="button"
                 @click="editCustomer(customer)"
                 :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
           <h2>{{ customer.name }}</h2>
