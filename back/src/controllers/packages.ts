@@ -24,7 +24,8 @@ export async function getPackageDetail(req, reply) {
 
     if (packageId) {
         const db = await getDBInstance()
-        const { rows: currentPackage } = await db.query<Package>(
+        const { rows: currentPackage } = await db.query(
+            '' +
             'SELECT ' +
                 'p.date_closing AS "dateClosing", ' +
                 'p.date_confirmed AS "dateConfirmed", ' +
@@ -34,38 +35,50 @@ export async function getPackageDetail(req, reply) {
                 'p.shipping_cost AS "shippingCost", ' +
                 'p.status, ' +
                 'p.id, ' +
-                'p.opened ' +
+                'p.opened, ' +
+                '( ' +
+                    'SELECT json_agg(order_details) ' +
+                    'FROM ( ' +
+                        'SELECT ' +
+                            'o.id AS "orderId", ' +
+                            'o.note, ' +
+                            'o.package_id AS "packageID", ' +
+                            'o.paid, ' +
+                            'c.name, ' +
+                            'c.id AS "customerId", ' +
+                            'c.last_name AS "lastName", ' +
+                            'c.customer_alias AS customerAlias, ' +
+                            '( ' +
+                                'SELECT json_agg(order_line) ' +
+                                'FROM ( ' +
+                                    'SELECT ' +
+                                        'ol.id, ' +
+                                        'ol.weight ' +
+                                    'FROM ' +
+                                        'jamones.order_line ol ' +
+                                    'WHERE ' +
+                                        'ol.order_id = o.id ' +
+                                ') order_line ' +
+                            ') as "orderLines" ' +
+                        'FROM ' +
+                            'jamones.order o ' +
+                        'LEFT JOIN ' +
+                            'jamones.customer c ON o.customer_id = c.id ' +
+                        'WHERE ' +
+                            'o.package_id = p.id ' +
+                    ') order_details ' +
+                ') AS orders ' +
             'FROM ' +
                 'jamones.package p ' +
             'WHERE ' +
-                `p.id = $1`,
-            [ packageId ]
-        )
-        const { rows : orders } = await db.query(
-            'SELECT ' +
-                'o.id AS "orderId", ' +
-                'o.package_id AS "packageId", ' +
-                'o.customer_id AS "customerId", ' +
-                'o.paid, ' +
-                'c.name AS "name", ' +
-                'c.last_name AS "lastName", ' +
-                'c.customer_alias AS "customerAlias" ' +
-            'FROM ' +
-                'jamones.package p ' +
-            'LEFT JOIN ' +
-                'jamones.order o ON p.id = o.package_id ' +
-            'LEFT JOIN ' +
-                'jamones.customer c ON o.customer_id = c.id ' +
-            'WHERE ' +
-                `p.id = $1`,
-            [ packageId ]
-        )
+                'p.id = $1',
+            [packageId]
+            )
         if (currentPackage.length) {
             return {
                 ...currentPackage[0],
                 hamPrice : parseFloat(currentPackage[0].hamPrice),
                 shippingCost : parseFloat(currentPackage[0].shippingCost),
-                orders
             }
         } else {
             reply.status(404)
