@@ -3,10 +3,15 @@
 
     <the-hero :status="packageData.status"/>
 
-    <component :is="packageByStatus"
-               :packageOrders="packageOrders"
-               @order-update="handleOrderUpdate"
-               :packageData="packageData"/>
+    <opened-package v-if="packageData.status === PackageStatusOptions.Opened"
+                    :packageOrders="packageOrders"
+                    :packageData="packageData"
+                    @order-update="handleOrderUpdate"/>
+
+    <closed-package v-if="packageData.status === PackageStatusOptions.Closed"
+                    :packageOrders="packageOrders"
+                    :packageData="packageData"
+                    @order-update="handleOrderUpdate"/>
 
   </template>
 
@@ -16,7 +21,7 @@
 </template>
 
 <script setup lang="tsx">
-import {ref, shallowRef} from "vue";
+import {ref} from "vue";
 import {useRoute} from "vue-router";
 import {api} from "../services/api.ts";
 import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
@@ -30,7 +35,6 @@ import OpenedPackage from "./OpenedPackage.vue";
 
 const route = useRoute()
 
-const packageByStatus = shallowRef()
 const packageOrders = ref<PackageOrder[]>([])
 const packageData = ref<Package>()
 
@@ -40,8 +44,6 @@ async function fetchPackageDetail() {
     const { orders, ...responsePackageData } = data
     packageOrders.value = orders
     packageData.value = responsePackageData
-    if (packageData.value?.status === PackageStatusOptions.Opened) packageByStatus.value = OpenedPackage
-    if (packageData.value?.status === PackageStatusOptions.Closed) packageByStatus.value = ClosedPackage
   } catch (e) {
     console.error(e)
   }
@@ -50,6 +52,10 @@ async function fetchPackageDetail() {
 fetchPackageDetail()
 
 function handleOrderUpdate(order: PackageOrder) {
-  console.log('handleOrderUpdate', order)
+  packageOrders.value.map((item: PackageOrder) => {
+    if (item.orderId === order.orderId) {
+      item.name = 'Antonio'
+    }
+  })
 }
 </script>
