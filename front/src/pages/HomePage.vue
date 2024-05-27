@@ -48,7 +48,6 @@ import { es } from "date-fns/locale";
 
 import { api } from "../services/api.ts";
 import {Package} from "../types/Package.ts";
-import {useCustomerStore} from "../store/customers.ts";
 
 import TheHero from "@components/shared/TheHero.vue";
 import TheBanner from "@components/shared/TheBanner.vue";
@@ -62,7 +61,6 @@ import colorCSSM from "@css/utilities/colors.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
 
 const router = useRouter()
-const customerStore = useCustomerStore()
 
 const currentPackage = ref<Package>()
 const previousPackages = ref<Package[]>([])
@@ -73,10 +71,9 @@ async function fetchPackages() {
     previousPackages.value = data.filter((item: Package) => !!item.dateClosing)
     currentPackage.value = data.find((item: Package) => !(!!item.dateClosing))
   } catch (e) {
-    console.error(e)
+    console.error('fetchPackages: ', e)
   }
 }
 
 fetchPackages()
-customerStore.fetchCustomers()
 </script>
