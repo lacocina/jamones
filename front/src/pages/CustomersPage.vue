@@ -29,9 +29,8 @@
 </template>
 
 <script setup lang="tsx">
-import { onMounted, reactive } from "vue";
+import {computed} from "vue";
 
-import { api } from "../services/api.ts";
 import { useOverlay } from "@composables/useOverlay.ts";
 import { ClosedModal } from "../types/ClosedModal.ts";
 import type { Customer } from "../types/Customer.ts";
@@ -46,8 +45,7 @@ import oStackCSSM from "@css/objects/o-stack.module.css";
 import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
 import colorCSSM from "@css/utilities/colors.module.css";
-
-const customers = reactive<Customer[]>([])
+import {useCustomerStore} from "../store/customers.ts";
 
 const { open } = useOverlay()
 
@@ -57,7 +55,7 @@ async function editCustomer(customer: Customer) {
     console.log('editCustomer: ', response)
   } catch (e) {
     if (e !== ClosedModal) {
-      console.error("ERRORR")
+      console.error("ERROR")
     }
   }
 }
@@ -68,20 +66,13 @@ async function newCustomer() {
     console.log('newCustomer: ', response)
   } catch (e) {
     if (e !== ClosedModal) {
-      console.error("ERRORR")
+      console.error("ERROR")
     }
   }
 }
 
-async function fetchCustomers () {
-  try {
-    const { data } = await api.get('/customers')
-    customers.splice(0, customers.length, ...data);
-  } catch (e) {
-    console.error(e)
-  }
-}
+const customerStore = useCustomerStore()
 
-onMounted(() => fetchCustomers())
+const customers = computed(() => customerStore.getCustomers)
 
 </script>
