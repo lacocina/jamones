@@ -37,17 +37,17 @@ export async function getPackageDetail(req, reply) {
                 'p.id, ' +
                 'p.opened, ' +
                 '( ' +
-                    'SELECT json_agg(order_details) ' +
+                    'SELECT json_agg(customer_order) ' +
                     'FROM ( ' +
                         'SELECT ' +
                             'o.id AS "orderId", ' +
                             'o.note, ' +
-                            'o.package_id AS "packageID", ' +
+                            'o.package_id AS "packageId", ' +
                             'o.paid, ' +
                             'c.name, ' +
                             'c.id AS "customerId", ' +
                             'c.last_name AS "lastName", ' +
-                            'c.customer_alias AS customerAlias, ' +
+                            'c.customer_alias AS "customerAlias", ' +
                             '( ' +
                                 'SELECT json_agg(order_line) ' +
                                 'FROM ( ' +
@@ -59,14 +59,12 @@ export async function getPackageDetail(req, reply) {
                                     'WHERE ' +
                                         'ol.order_id = o.id ' +
                                 ') order_line ' +
-                            ') as "orderLines" ' +
+                            ') as "lines" ' +
                         'FROM ' +
-                            'jamones.order o ' +
+                            'jamones.customer c ' +
                         'LEFT JOIN ' +
-                            'jamones.customer c ON o.customer_id = c.id ' +
-                        'WHERE ' +
-                            'o.package_id = p.id ' +
-                    ') order_details ' +
+                            'jamones.order o ON o.customer_id = c.id ' +
+                    ') customer_order ' +
                 ') AS orders ' +
             'FROM ' +
                 'jamones.package p ' +
