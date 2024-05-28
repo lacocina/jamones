@@ -63,7 +63,7 @@ export async function getPackageDetail(req, reply) {
                         'FROM ' +
                             'jamones.customer c ' +
                         'LEFT JOIN ' +
-                            'jamones.order o ON o.customer_id = c.id ' +
+                            'jamones.order o ON c.id = o.customer_id AND o.package_id = p.id ' +
                     ') customer_order ' +
                 ') AS orders ' +
             'FROM ' +
@@ -71,7 +71,7 @@ export async function getPackageDetail(req, reply) {
             'WHERE ' +
                 'p.id = $1',
             [packageId]
-            )
+        )
         if (currentPackage.length) {
             return {
                 ...currentPackage[0],
