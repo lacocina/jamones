@@ -39,7 +39,7 @@ async function openDialog() {
     if (response.reason === 'confirm' && response.value) {
       try {
         const { data } = await api.patch(
-            `packages/updateShippingCost/${props.packageId}`,
+            `packages/updatePackage/${props.packageId}`,
             { shippingCost: response.value }
         )
         emit('update:model-value', data.shippingCost)

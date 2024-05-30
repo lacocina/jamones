@@ -40,7 +40,7 @@ async function openDialog() {
     const response = await open(<PriceDialog price={props.modelValue}/>)
     if (response.reason === 'confirm' && response.value) {
       try {
-        const { data } = await api.patch(`packages/updateHamPrice/${props.packageId}`, { hamPrice: response.value })
+        const { data } = await api.patch(`packages/updatePackage/${props.packageId}`, { hamPrice: response.value })
         emit('update:model-value', data.hamPrice)
       } catch (e) {
         console.error(e)

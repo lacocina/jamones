@@ -100,28 +100,6 @@ export async function patchPackage(req, reply) {
     }
 }
 
-export async function updateShippingCost(req, reply) {
-    if (!req.params.id || !req.body.shippingCost) {
-        reply.status(400)
-        return 'Falta el ID o el nuevo precio de los gastos'
-    }
-    try {
-        const db = await getDBInstance()
-        const { rows} = await db.query(`UPDATE jamones.package
-                                       SET shipping_cost = ${ req.body.shippingCost } ::numeric
-                                       WHERE id = ${ req.params.id }
-                                       RETURNING shipping_cost`)
-        if (rows.length == 0) {
-            reply.status(404)
-            return 'No se ha encontrado el paquete'
-        }
-        return { shippingCost: parseFloat(rows[0].shipping_cost) }
-    } catch (error) {
-        reply.status(500)
-        return { message:'Error del servidor', error }
-    }
-}
-
 export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) => {
 
     app.get('/list', getAllPackages)
@@ -130,9 +108,7 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
 
     app.get('/current', getCurrentPackage)
 
-    app.patch('/updateHamPrice/:id', (request, reply) => patchPackage(request, reply))
-
-    app.patch('/updateShippingCost/:id', (request, reply) => patchPackage(request, reply))
+    app.patch('/updatePackage/:id', (request, reply) => patchPackage(request, reply))
 
     next()
 }
