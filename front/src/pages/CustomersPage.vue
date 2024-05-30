@@ -5,15 +5,15 @@
 
     <list-box title="Listado de clientes" default-color>
       <template v-if="customers?.length">
-        <button v-for="customer in customers"
-                :key="customer.customerId" type="button"
+        <div v-for="customer in customers"
+                :key="customer.customerId"
                 @click="editCustomer(customer)"
                 :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
           <h2>{{ customer.name }}</h2>
           <span class="material-symbols-rounded" :class="colorCSSM.fontSoft">
             chevron_right
           </span>
-        </button>
+        </div>
       </template>
       <div :class="[cListBoxCSSM.item, colorCSSM.fontSoft]" v-else>
         Aún no hay ningún cliente añadido
@@ -72,7 +72,6 @@ async function newCustomer() {
 }
 
 const customerStore = useCustomerStore()
-
 const customers = computed(() => customerStore.getCustomers)
 
 </script>
