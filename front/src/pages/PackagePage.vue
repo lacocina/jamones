@@ -1,12 +1,16 @@
 <template>
-  <template v-if="packageData && packageOrders">
+  <template v-if="isLoading">
+    <LoadingLottie>
+      Cargando datos del paquete...
+    </LoadingLottie>
+  </template>
+  <template v-else-if="packageData && packageOrders">
 
     <the-hero :status="packageData.status"/>
 
     <opened-package v-if="packageData.status === PackageStatusOptions.Opened"
                     :packageOrders="packageOrders"
-                    :packageData="packageData"
-                    @order-update="handleOrderUpdate"/>
+                    :packageData="packageData"/>
 
     <closed-package v-if="packageData.status === PackageStatusOptions.Closed"
                     :packageOrders="packageOrders"
@@ -14,9 +18,8 @@
                     @order-update="handleOrderUpdate"/>
 
   </template>
-
-  <template else>
-    Loading
+  <template v-else>
+    Paquete con el ID {{ route.params.packageId }} no encontrado
   </template>
 </template>
 
@@ -33,9 +36,11 @@ import {PackageStatusOptions} from "../types/PackageStatus.ts";
 import TheHero from "@components/shared/TheHero.vue";
 import ClosedPackage from "./ClosedPackage.vue";
 import OpenedPackage from "./OpenedPackage.vue";
+import LoadingLottie from "@components/shared/LoadingLottie.vue";
 
 const route = useRoute()
 
+const isLoading = ref(true)
 const packageOrders = reactive<PackageOrder[]>([])
 const packageData = ref<Package>()
 
@@ -43,10 +48,13 @@ async function fetchPackageDetail() {
   try {
     const { data } : { data: ResponsePackageDetail } = await api.get(`packages/${route.params.packageId}`)
     const { orders, ...responsePackageData } = data
+    await new Promise(resolve => setTimeout(resolve, 1000))
     packageOrders.splice(0, packageOrders.length, ...orders)
     packageData.value = responsePackageData
   } catch (e) {
     console.error(e)
+  } finally {
+    isLoading.value = false
   }
 }
 
