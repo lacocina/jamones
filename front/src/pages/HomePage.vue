@@ -2,31 +2,35 @@
 
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
-    <the-hero
-        v-if="currentPackage"
-        :status="currentPackage.status"
-        :to="{ name: 'package', params: { packageId: currentPackage.id } }"/>
+    <div v-if="isLoading">Loading...</div>
 
-    <list-box v-if="previousPackages.length" default-color>
-      <router-link v-for="order in previousPackages" :key="order.id"
-                   :to="{ name: 'package', params: { packageId: order.id } }"
-                   :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
-        <div>
-          <h2>{{ format(order.dateReceived, 'LLLL yyyy', { locale: es } ) }}</h2>
-          <div :class="textCSSM.sizeSmall">
-            <span :class="[colorCSSM.fontProduct, colorCSSM.ham]">
-              {{ order.shippingCost }}€
-            </span>
-            <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-              - {{ order.hamPrice }}€
-            </span>
+    <template v-else>
+      <the-hero
+          v-if="currentPackage"
+          :status="currentPackage.status"
+          :to="{ name: 'package', params: { packageId: currentPackage.id } }"/>
+
+      <list-box v-if="previousPackages.length" default-color>
+        <router-link v-for="order in previousPackages" :key="order.id"
+                     :to="{ name: 'package', params: { packageId: order.id } }"
+                     :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
+          <div>
+            <h2>{{ format(order.dateReceived, 'LLLL yyyy', { locale: es } ) }}</h2>
+            <div :class="textCSSM.sizeSmall">
+              <span :class="[colorCSSM.fontProduct, colorCSSM.ham]">
+                {{ order.shippingCost }}€
+              </span>
+              <span :class="[textCSSM.light, colorCSSM.fontSoft]">
+                - {{ order.hamPrice }}€
+              </span>
+            </div>
           </div>
-        </div>
-        <span class="material-symbols-rounded" :class="colorCSSM.fontSoft">
-          chevron_right
-        </span>
-      </router-link>
-    </list-box>
+          <span class="material-symbols-rounded" :class="colorCSSM.fontSoft">
+            chevron_right
+          </span>
+        </router-link>
+      </list-box>
+    </template>
 
   </section>
 
@@ -62,16 +66,20 @@ import oStackCSSM from "@css/objects/o-stack.module.css";
 
 const router = useRouter()
 
+const isLoading = ref(true)
 const currentPackage = ref<Package>()
 const previousPackages = ref<Package[]>([])
 
 async function fetchPackages() {
   try {
     const { data } = await api.get('/packages/list')
+    await new Promise(resolve => setTimeout(resolve, 1000))
     previousPackages.value = data.filter((item: Package) => !!item.dateClosing)
     currentPackage.value = data.find((item: Package) => !(!!item.dateClosing))
   } catch (e) {
     console.error('fetchPackages: ', e)
+  } finally {
+    isLoading.value = false
   }
 }
 
