@@ -2,7 +2,11 @@
 
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
-    <div v-if="isLoading">Loading...</div>
+
+    <div v-if="isLoading" :class="textCSSM.alignCenter">
+      <LottieAnimation :animationData="lottieLoading" :height="200" :width="200" />
+      Cargando datos...
+    </div>
 
     <template v-else>
       <the-hero
@@ -63,6 +67,8 @@ import cListBoxCSSM from '@css/components/molecules/c-list-box.module.css';
 import textCSSM from "@css/utilities/text.module.css";
 import colorCSSM from "@css/utilities/colors.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
+
+import lottieLoading from '@assets/lottie/1717083061969.json'
 
 const router = useRouter()
 
