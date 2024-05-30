@@ -37,13 +37,13 @@ interface Emits {
 defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const inputField = ref(null)
-const unitySpan = ref(null)
+const inputField = ref<HTMLElement | null>(null)
+const unitySpan = ref<HTMLElement | null>(null)
 
 watch([inputField, unitySpan],() => {
   if (unitySpan.value) {
-    const width = unitySpan.value.getBoundingClientRect().width
-    inputField.value.style.paddingRight = `${width + 16}px`
+    const width = unitySpan.value.offsetWidth
+    inputField.value!.style.paddingRight = `${width + 16}px`
   }
 })
 
