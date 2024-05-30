@@ -26,3 +26,7 @@
   font-size: var(--font-size-default);
   font-weight: var(--body-font-weight);
 }
+
+.align-center {
+  text-align: center;
+}
