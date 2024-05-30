@@ -20,6 +20,6 @@ export const patchPackageToResponseMapper = (packageParam: RawPackageUpdate) : P
         dateConfirmed: packageParam.date_confirmed,
         dateReceived: packageParam.date_received,
         dateClosing: packageParam.date_closing,
-        shippingCost: parseFloat(packageParam.ham_price)
+        shippingCost: parseFloat(packageParam.shipping_cost)
     }
 }
