@@ -1,11 +1,13 @@
-import { FastifyInstance } from "fastify";
-import { getDBInstance } from "../db/db.ts";
-import { Package, RawPackage } from "../types/Package.ts";
+import {FastifyInstance} from "fastify";
+import {getDBInstance} from "../db/db.ts";
+import {Package, RawPackage} from "../types/Package.ts";
+import {updatePackage} from "../db/packages.ts";
+import {patchPackageToDbMapper, patchPackageToResponseMapper} from "../mappers/patch-package.ts";
 
-export async function getAllPackages() : Promise<Package[]> {
+export async function getAllPackages(): Promise<Package[]> {
     const db = await getDBInstance()
-    const { rows } : { rows: RawPackage[] } = await db.query('SELECT * from jamones.package')
-    return rows.map((item: RawPackage) : Package => {
+    const {rows}: { rows: RawPackage[] } = await db.query('SELECT * from jamones.package')
+    return rows.map((item: RawPackage): Package => {
         return {
             id: item.id,
             status: item.status,
@@ -24,63 +26,44 @@ export async function getPackageDetail(req, reply) {
 
     if (packageId) {
         const db = await getDBInstance()
-        const { rows: currentPackage } = await db.query(
-            '' +
-            'SELECT ' +
-                'p.date_closing AS "dateClosing", ' +
-                'p.date_confirmed AS "dateConfirmed", ' +
-                'p.date_creation AS "dateCreation", ' +
-                'p.date_received AS "dateReceived", ' +
-                'p.ham_price AS "hamPrice", ' +
-                'p.shipping_cost AS "shippingCost", ' +
-                'p.status, ' +
-                'p.id, ' +
-                'p.opened, ' +
-                '( ' +
-                    'SELECT json_agg(customer_order) ' +
-                    'FROM ( ' +
-                        'SELECT ' +
-                            'o.id AS "orderId", ' +
-                            'o.note, ' +
-                            'o.package_id AS "packageId", ' +
-                            'o.paid, ' +
-                            'c.name, ' +
-                            'c.id AS "customerId", ' +
-                            'c.last_name AS "lastName", ' +
-                            'c.customer_alias AS "customerAlias", ' +
-                            '( ' +
-                                'SELECT json_agg(order_line) ' +
-                                'FROM ( ' +
-                                    'SELECT ' +
-                                        'ol.id, ' +
-                                        'ol.weight ' +
-                                    'FROM ' +
-                                        'jamones.order_line ol ' +
-                                    'WHERE ' +
-                                        'ol.order_id = o.id ' +
-                                ') order_line ' +
-                            ') as "lines" ' +
-                        'FROM ' +
-                            'jamones.customer c ' +
-                        'LEFT JOIN ' +
-                            'jamones.order o ON c.id = o.customer_id AND o.package_id = p.id ' +
-                    ') customer_order ' +
-                ') AS orders ' +
-            'FROM ' +
-                'jamones.package p ' +
-            'WHERE ' +
-                'p.id = $1',
+        const {rows: currentPackage} = await db.query(
+            `SELECT p.date_closing                                                                                             AS "dateClosing",
+                    p.date_confirmed                                                                                           AS "dateConfirmed",
+                    p.date_creation                                                                                            AS "dateCreation",
+                    p.date_received                                                                                            AS "dateReceived",
+                    p.ham_price                                                                                                AS "hamPrice",
+                    p.shipping_cost                                                                                            AS "shippingCost",
+                    p.status,
+                    p.id,
+                    p.opened,
+                    (SELECT json_agg(customer_order)
+                     FROM (SELECT o.id                                         AS "orderId",
+                                  o.note,
+                                  o.package_id                                 AS "packageId",
+                                  o.paid,
+                                  c.name,
+                                  c.id                                         AS "customerId",
+                                  c.last_name                                  AS "lastName",
+                                  c.customer_alias                             AS "customerAlias",
+                                  (SELECT json_agg(order_line)
+                                   FROM (SELECT ol.id, ol.weight
+                                         FROM jamones.order_line ol
+                                         WHERE ol.order_id = o.id) order_line) as "lines"
+                           FROM jamones.customer c
+                                    LEFT JOIN jamones.order o ON o.customer_id = c.id AND o.package_id = p.id) customer_order) AS orders
+             FROM jamones.package p
+             WHERE p.id = $1`,
             [packageId]
         )
         if (currentPackage.length) {
             return {
                 ...currentPackage[0],
-                hamPrice : parseFloat(currentPackage[0].hamPrice),
-                shippingCost : parseFloat(currentPackage[0].shippingCost),
+                hamPrice: parseFloat(currentPackage[0].hamPrice),
+                shippingCost: parseFloat(currentPackage[0].shippingCost),
             }
         } else {
             reply.status(404)
-            return `No hay ningún paquete con el ID ${ packageId }`
+            return `No hay ningún paquete con el ID ${packageId}`
         }
     }
 
@@ -95,35 +78,48 @@ export async function getCurrentPackage() {
     return customers.rows
 }
 
-async function updatePackageProperty (req, reply, params: { dbName: string, returnName: string }) {
-    if (req.params.id && req.body[params.returnName]) {
-        try {
-            const db = await getDBInstance()
-            await db.query(`UPDATE jamones.package SET ${params.dbName} = ${req.body[params.returnName]} ::numeric WHERE id = ${req.params.id}`)
-            const { rows } = await db.query(`SELECT ${params.dbName} FROM jamones.package WHERE id = ${req.params.id}`)
-            return { [params.returnName]: parseFloat(rows[0][params.dbName]) }
-        } catch (e) {
-            reply.status(500)
-            return 'Error del servidor'
-        }
+export async function patchPackage(req, reply) {
+    if (!req.params.id || isNaN(parseInt(req.params.id))) {
+        reply.status(400).send('Falta el ID o no es correcto')
+        return
     }
-
-    reply.status(400)
-    return 'Falta el ID o el precio del jamón'
-}
-
-export async function updateHamPrice(req, reply) {
-    return await updatePackageProperty(req, reply, {
-        dbName: 'ham_price',
-        returnName: 'hamPrice'
-    })
+    const packageUpdate = patchPackageToDbMapper(req.body)
+    try {
+        const { rows } = await updatePackage(
+            req.params.id,
+            packageUpdate
+        )
+        if (rows.length == 0) {
+            reply.status(404)
+            return 'No se ha encontrado el paquete'
+        }
+        return patchPackageToResponseMapper(rows[0])
+    } catch (error) {
+        reply.status(500)
+        return { message:'Error del servidor', error }
+    }
 }
 
 export async function updateShippingCost(req, reply) {
-    return await updatePackageProperty(req, reply, {
-        dbName: 'shipping_cost',
-        returnName: 'shippingCost'
-    })
+    if (!req.params.id || !req.body.shippingCost) {
+        reply.status(400)
+        return 'Falta el ID o el nuevo precio de los gastos'
+    }
+    try {
+        const db = await getDBInstance()
+        const { rows} = await db.query(`UPDATE jamones.package
+                                       SET shipping_cost = ${ req.body.shippingCost } ::numeric
+                                       WHERE id = ${ req.params.id }
+                                       RETURNING shipping_cost`)
+        if (rows.length == 0) {
+            reply.status(404)
+            return 'No se ha encontrado el paquete'
+        }
+        return { shippingCost: parseFloat(rows[0].shipping_cost) }
+    } catch (error) {
+        reply.status(500)
+        return { message:'Error del servidor', error }
+    }
 }
 
 export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) => {
@@ -134,9 +130,9 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
 
     app.get('/current', getCurrentPackage)
 
-    app.patch('/updateHamPrice/:id', (request, reply) => updateHamPrice(request, reply))
+    app.patch('/updateHamPrice/:id', (request, reply) => patchPackage(request, reply))
 
-    app.patch('/updateShippingCost/:id', (request, reply) => updateShippingCost(request, reply))
+    app.patch('/updateShippingCost/:id', (request, reply) => patchPackage(request, reply))
 
     next()
 }

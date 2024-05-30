@@ -4,14 +4,12 @@ import { getDBInstance } from "../db/db.ts";
 export async function getCustomers() {
     const db = await getDBInstance()
     const customers = await db.query(
-        '' +
-        'SELECT ' +
-            'id AS "customerId", ' +
-            'name, ' +
-            'last_name AS "lastName", ' +
-            'customer_alias AS "customerAlias" ' +
-        'FROM ' +
-            'jamones.customer'
+        `SELECT 
+            id AS "customerId", 
+            name, 
+            last_name AS "lastName",
+            customer_alias AS "customerAlias"
+         FROM jamones.customer`
     )
     return customers.rows
 }
