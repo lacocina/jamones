@@ -1,9 +1,9 @@
 <template>
-  <template v-if="isLoading">
-    <LoadingLottie>
-      Cargando datos del paquete...
-    </LoadingLottie>
-  </template>
+
+  <LoadingLottie v-if="isLoading" :class="uPadding.bottomXl">
+    Cargando datos del paquete...
+  </LoadingLottie>
+
   <template v-else-if="packageData && packageOrders">
 
     <the-hero :status="packageData.status"/>
@@ -37,6 +37,8 @@ import TheHero from "@components/shared/TheHero.vue";
 import ClosedPackage from "./ClosedPackage.vue";
 import OpenedPackage from "./OpenedPackage.vue";
 import LoadingLottie from "@components/shared/LoadingLottie.vue";
+
+import uPadding from '@css/utilities/u-padding.module.css'
 
 const route = useRoute()
 
