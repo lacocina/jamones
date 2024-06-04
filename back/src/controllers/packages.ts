@@ -3,7 +3,7 @@ import { getDBInstance } from "../db/db.ts";
 import { PackageSimple, RawPackageSimple } from "../types/PackageSimple.ts";
 import { updatePackage } from "../db/packages.ts";
 import { patchPackageToDbMapper, patchPackageToResponseMapper } from "../mappers/patch-package.ts";
-import {Package, PackageUpdate, RawPackage} from "../types/Package.ts";
+import { RawPackage } from "../types/Package.ts";
 import {packageToResponseMapper} from "../mappers/package.ts";
 
 export async function getAllPackages(): Promise<PackageSimple[]> {
@@ -77,14 +77,16 @@ export async function getAllPackageDetails(req, reply) {
     try {
         const db = await getDBInstance()
         const { rows: packages } : { rows: RawPackage[] } = await db.query(
-            `SELECT p.date_closing   AS "dateClosing",
+            `SELECT
+                    p.id,
+                    p.date_closing,
                     p.date_confirmed,
                     p.date_creation,
                     p.date_received,
+                    p.date_closing,
                     p.ham_price,
                     p.shipping_cost,
                     p.status,
-                    p.id,
                     p.opened,
                     (SELECT json_agg(customer_order)
                      FROM (SELECT o.id AS "order_id",

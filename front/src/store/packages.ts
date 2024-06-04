@@ -12,8 +12,11 @@ export const usePackageStore = defineStore('packages', () => {
     const error = ref<any | null>(null)
 
     const loadingPackages = computed(() => loading.value)
-    const currentPackage = computed(() => packageList.value.find((item: Package) => !(!!item.dateClosing)))
-    const closedPackages = computed(() => packageList.value.filter((item: Package) => !!item.dateClosing))
+    const currentPackage = computed(() => {
+        return allPackageDetails.value
+            .find((item: ResponsePackageDetail) => !(!!item.dateClosing))
+    })
+    const closedPackages = computed(() => allPackageDetails.value.filter((item: ResponsePackageDetail) => !!item.dateClosing))
 
     async function fetchPackageList() {
         if (!packageList.value.length) {
@@ -66,6 +69,7 @@ export const usePackageStore = defineStore('packages', () => {
         loading,
         error,
         loadingPackages,
+        allPackageDetails,
         closedPackages,
         currentPackage,
         fetchPackageList,
