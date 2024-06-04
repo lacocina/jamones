@@ -68,6 +68,7 @@ const packageStore = usePackageStore()
 const customerStore = useCustomerStore()
 
 packageStore.fetchPackageList()
+packageStore.fetchAllPackageDetails()
 const loadingPackages = computed(() => packageStore.loadingPackages)
 const currentPackage = computed(() => packageStore.currentPackage)
 const previousPackages = computed(() => packageStore.closedPackages)

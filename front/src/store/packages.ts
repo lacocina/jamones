@@ -7,6 +7,7 @@ import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 export const usePackageStore = defineStore('packages', () => {
     const packageList = ref<Package[]>([])
     const packageDetails = ref<ResponsePackageDetail[]>([])
+    const allPackageDetails = ref<ResponsePackageDetail[]>([])
     const loading = ref<boolean>(true)
     const error = ref<any | null>(null)
 
@@ -26,6 +27,19 @@ export const usePackageStore = defineStore('packages', () => {
             } finally {
                 loading.value = false
             }
+        }
+    }
+
+    async function fetchAllPackageDetails() {
+        try {
+            const { data } = await api.get('/packages/list-details')
+            await new Promise(resolve => setTimeout(resolve, 2000))
+            allPackageDetails.value = data
+        } catch (e) {
+            console.error('fetchPackages: ', e)
+            error.value = e
+        } finally {
+            loading.value = false
         }
     }
 
@@ -55,6 +69,7 @@ export const usePackageStore = defineStore('packages', () => {
         closedPackages,
         currentPackage,
         fetchPackageList,
-        fetchPackageDetail
+        fetchPackageDetail,
+        fetchAllPackageDetails
     }
 })

@@ -1,43 +1,26 @@
 import { PackageStatusOptions } from "./PackageStatus.ts";
+import { CustomerOrder, RawCustomerOrder } from "./CustomerOrder.ts";
 
-export interface RawPackage {
+export type RawPackage = {
     id: number
     status: PackageStatusOptions
-    ham_price?: string
+    ham_price?: string | number
     date_creation?: Date
     date_confirmed?: Date
     date_received?: Date
     date_closing?: Date
-    shipping_cost?: string
+    shipping_cost?: string | number
+    orders?: RawCustomerOrder[]
 }
 
-export interface RawPackageUpdate {
-    status?: PackageStatusOptions
-    ham_price?: string
-    date_creation?: Date
-    date_confirmed?: Date
-    date_received?: Date
-    date_closing?: Date
-    shipping_cost?: string
-}
-
-export interface Package {
+export type Package = {
     id: number
     status: PackageStatusOptions
-    hamPrice?: string
+    hamPrice?: string | number
     dateCreation?: Date
     dateConfirmed?: Date
     dateReceived?: Date
     dateClosing?: Date
-    shippingCost?: string
-}
-
-export interface PackageUpdate {
-    status?: PackageStatusOptions
-    hamPrice?: number
-    dateCreation?: Date
-    dateConfirmed?: Date
-    dateReceived?: Date
-    dateClosing?: Date
-    shippingCost?: number
+    shippingCost?: string | number
+    orders?: CustomerOrder[]
 }

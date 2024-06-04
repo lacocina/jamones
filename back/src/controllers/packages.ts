@@ -1,13 +1,15 @@
-import {FastifyInstance} from "fastify";
-import {getDBInstance} from "../db/db.ts";
-import {Package, RawPackage} from "../types/Package.ts";
-import {updatePackage} from "../db/packages.ts";
-import {patchPackageToDbMapper, patchPackageToResponseMapper} from "../mappers/patch-package.ts";
+import { FastifyInstance } from "fastify";
+import { getDBInstance } from "../db/db.ts";
+import { PackageSimple, RawPackageSimple } from "../types/PackageSimple.ts";
+import { updatePackage } from "../db/packages.ts";
+import { patchPackageToDbMapper, patchPackageToResponseMapper } from "../mappers/patch-package.ts";
+import {Package, PackageUpdate, RawPackage} from "../types/Package.ts";
+import {packageToResponseMapper} from "../mappers/package.ts";
 
-export async function getAllPackages(): Promise<Package[]> {
+export async function getAllPackages(): Promise<PackageSimple[]> {
     const db = await getDBInstance()
-    const {rows}: { rows: RawPackage[] } = await db.query('SELECT * from jamones.package')
-    return rows.map((item: RawPackage): Package => {
+    const {rows}: { rows: RawPackageSimple[] } = await db.query('SELECT * from jamones.package')
+    return rows.map((item: RawPackageSimple): PackageSimple => {
         return {
             id: item.id,
             status: item.status,
@@ -27,12 +29,12 @@ export async function getPackageDetail(req, reply) {
     if (packageId) {
         const db = await getDBInstance()
         const {rows: currentPackage} = await db.query(
-            `SELECT p.date_closing                                                                                             AS "dateClosing",
-                    p.date_confirmed                                                                                           AS "dateConfirmed",
-                    p.date_creation                                                                                            AS "dateCreation",
-                    p.date_received                                                                                            AS "dateReceived",
-                    p.ham_price                                                                                                AS "hamPrice",
-                    p.shipping_cost                                                                                            AS "shippingCost",
+            `SELECT p.date_closing   AS "dateClosing",
+                    p.date_confirmed AS "dateConfirmed",
+                    p.date_creation  AS "dateCreation",
+                    p.date_received  AS "dateReceived",
+                    p.ham_price      AS "hamPrice",
+                    p.shipping_cost  AS "shippingCost",
                     p.status,
                     p.id,
                     p.opened,
@@ -50,16 +52,16 @@ export async function getPackageDetail(req, reply) {
                                          FROM jamones.order_line ol
                                          WHERE ol.order_id = o.id) order_line) as "lines"
                            FROM jamones.customer c
-                                    LEFT JOIN jamones.order o ON o.customer_id = c.id AND o.package_id = p.id) customer_order) AS orders
-             FROM jamones.package p
-             WHERE p.id = $1`,
-            [packageId]
+                                    LEFT JOIN jamones.order o ON o.customer_id = c.id AND o.package_id = p.id) customer_order)
+                                     AS orders
+             FROM jamones.package p`
         )
         if (currentPackage.length) {
             return {
                 ...currentPackage[0],
                 hamPrice: parseFloat(currentPackage[0].hamPrice),
                 shippingCost: parseFloat(currentPackage[0].shippingCost),
+                all: currentPackage
             }
         } else {
             reply.status(404)
@@ -71,11 +73,49 @@ export async function getPackageDetail(req, reply) {
     return 'Falta el ID'
 }
 
+export async function getAllPackageDetails(req, reply) {
+    try {
+        const db = await getDBInstance()
+        const { rows: packages } : { rows: RawPackage[] } = await db.query(
+            `SELECT p.date_closing   AS "dateClosing",
+                    p.date_confirmed,
+                    p.date_creation,
+                    p.date_received,
+                    p.ham_price,
+                    p.shipping_cost,
+                    p.status,
+                    p.id,
+                    p.opened,
+                    (SELECT json_agg(customer_order)
+                     FROM (SELECT o.id AS "order_id",
+                                  o.note,
+                                  o.package_id,
+                                  o.paid,
+                                  c.name,
+                                  c.id AS "customer_id",
+                                  c.last_name,
+                                  c.customer_alias,
+                                  (SELECT json_agg(order_line)
+                                   FROM (SELECT ol.id, ol.weight
+                                         FROM jamones.order_line ol
+                                         WHERE ol.order_id = o.id) order_line) as "lines"
+                           FROM jamones.customer c
+                                    LEFT JOIN jamones.order o ON o.customer_id = c.id AND o.package_id = p.id) customer_order)
+                                     AS orders
+             FROM jamones.package p`
+        )
 
-export async function getCurrentPackage() {
-    const db = await getDBInstance()
-    const customers = await db.query('SELECT * from jamones.package WHERE opened = true')
-    return customers.rows
+        if (packages.length) {
+            return packages?.map(packageToResponseMapper)
+        }
+
+        reply.status(404).send('Aún no hay paquetes')
+        return []
+
+    } catch (error) {
+        reply.status(500).send('Error del servidor')
+        return { message:'Error del servidor', error }
+    }
 }
 
 export async function patchPackage(req, reply) {
@@ -104,9 +144,9 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
 
     app.get('/list', getAllPackages)
 
-    app.get('/:id', (request, reply) => getPackageDetail(request, reply))
+    app.get('/list-details', (request, reply) => getAllPackageDetails(request, reply))
 
-    app.get('/current', getCurrentPackage)
+    app.get('/:id', (request, reply) => getPackageDetail(request, reply))
 
     app.patch('/updatePackage/:id', (request, reply) => patchPackage(request, reply))
 

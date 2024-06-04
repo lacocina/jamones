@@ -1,6 +1,6 @@
-import {Package, PackageUpdate, RawPackageUpdate} from "../types/Package.ts";
+import { PackageSimple, PackageSimpleUpdate, RawPackageSimpleUpdate } from "../types/PackageSimple.ts";
 
-export const patchPackageToDbMapper = (packageParam: Package) : RawPackageUpdate => {
+export const patchPackageToDbMapper = (packageParam: PackageSimple) : RawPackageSimpleUpdate => {
     return {
         status: packageParam.status,
         ham_price: packageParam.hamPrice,
@@ -12,7 +12,7 @@ export const patchPackageToDbMapper = (packageParam: Package) : RawPackageUpdate
     }
 }
 
-export const patchPackageToResponseMapper = (packageParam: RawPackageUpdate) : PackageUpdate => {
+export const patchPackageToResponseMapper = (packageParam: RawPackageSimpleUpdate) : PackageSimpleUpdate => {
     return {
         status: packageParam.status,
         hamPrice: parseFloat(packageParam.ham_price),
