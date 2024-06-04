@@ -30,14 +30,13 @@ export const usePackageStore = defineStore('packages', () => {
     }
 
     async function fetchPackageDetail(id: string) : Promise<ResponsePackageDetail | any> {
-        const targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id.toString() === id)
+        let targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id.toString() === id)
         if (targetPackage) return targetPackage
         loading.value = true
         try {
-            const { data } : { data: ResponsePackageDetail } = await api.get(`packages/${id}`)
-            await new Promise(resolve => setTimeout(resolve, 2000))
-            allPackageDetails.value.push(data)
-            return data
+            await fetchAllPackageDetails()
+            targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id.toString() === id)
+            return targetPackage
         } catch (e) {
             console.error(e)
             return e
