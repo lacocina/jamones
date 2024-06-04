@@ -1,10 +1,10 @@
 <template>
 
-  <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
+  <LoadingLottie v-if="loadingPackages || loadingCustomers"/>
 
-    <LoadingLottie v-if="isLoading" />
+  <template v-else>
 
-    <template v-else>
+    <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
       <the-hero
           v-if="currentPackage"
           :status="currentPackage.status"
@@ -15,7 +15,7 @@
                      :to="{ name: 'package', params: { packageId: order.id } }"
                      :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
           <div>
-            <h2>{{ format(order.dateReceived, 'LLLL yyyy', { locale: es } ) }}</h2>
+            <h2>{{ format(order.dateReceived, 'LLLL yyyy', {locale: es}) }}</h2>
             <div :class="textCSSM.sizeSmall">
               <span :class="[colorCSSM.fontProduct, colorCSSM.ham]">
                 {{ order.shippingCost }}€
@@ -30,28 +30,26 @@
           </span>
         </router-link>
       </list-box>
-    </template>
 
-  </section>
+    </section>
 
-  <the-banner title="Gestionar clientes"
-              button-text="Clientes"
-              @click="router.push({ name: 'customers' })"
-              soft>
-    Aquí puedes editar, eliminar o añadir clientes.
-  </the-banner>
+    <the-banner title="Gestionar clientes"
+                button-text="Clientes"
+                @click="router.push({ name: 'customers' })"
+                soft>
+      Aquí puedes editar, eliminar o añadir clientes.
+    </the-banner>
 
+  </template>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import {computed} from "vue";
 import { useRouter } from "vue-router";
-
+import {usePackageStore} from "../store/packages.ts";
+import {useCustomerStore} from "../store/customers.ts";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-
-import { api } from "../services/api.ts";
-import {Package} from "../types/Package.ts";
 
 import TheHero from "@components/shared/TheHero.vue";
 import TheBanner from "@components/shared/TheBanner.vue";
@@ -66,23 +64,15 @@ import oStackCSSM from "@css/objects/o-stack.module.css";
 import LoadingLottie from "@components/shared/LoadingLottie.vue";
 
 const router = useRouter()
+const packageStore = usePackageStore()
+const customerStore = useCustomerStore()
 
-const isLoading = ref(true)
-const currentPackage = ref<Package>()
-const previousPackages = ref<Package[]>([])
+packageStore.fetchPackageList()
+const loadingPackages = computed(() => packageStore.loadingPackages)
+const currentPackage = computed(() => packageStore.currentPackage)
+const previousPackages = computed(() => packageStore.closedPackages)
 
-async function fetchPackages() {
-  try {
-    const { data } = await api.get('/packages/list')
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    previousPackages.value = data.filter((item: Package) => !!item.dateClosing)
-    currentPackage.value = data.find((item: Package) => !(!!item.dateClosing))
-  } catch (e) {
-    console.error('fetchPackages: ', e)
-  } finally {
-    isLoading.value = false
-  }
-}
+customerStore.fetchCustomers()
+const loadingCustomers = computed(() => customerStore.loadingCustomers)
 
-fetchPackages()
 </script>

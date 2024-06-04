@@ -1,35 +1,33 @@
 import { defineStore } from "pinia";
 import {api} from "../services/api.ts";
 import {Customer} from "../types/Customer.ts";
+import {computed, ref} from "vue";
 
-export const useCustomerStore = () => {
-    const customerStore = defineStore('customer',{
-        state: () => ({
-            customers: [] as Customer[],
-            loading: true,
-            error: null as any | null,
-        }),
-        getters: {
-          getCustomers : ({ customers } : {customers: Customer[]}) : Customer[] => customers
-        },
-        actions: {
-            async fetchCustomers() {
-                try {
-                    const { data } = await api.get('/customers')
-                    this.customers.splice(0, this.customers.length, ...data);
-                } catch (e) {
-                    console.error('fetchCustomers: ', e)
-                    this.error = e
-                } finally {
-                    this.loading = false
-                }
-            }
+export const useCustomerStore = defineStore('customer',() => {
+    const customers = ref<Customer[]>([])
+    const loading = ref<boolean>(true)
+    const error = ref<any | null>(null)
+
+    const loadingCustomers = computed(() => loading.value)
+    const customersList = computed(() => customers.value)
+
+    async function fetchCustomers() {
+        try {
+            const { data } = await api.get('/customers')
+            customers.value.splice(0, customers.value.length, ...data);
+        } catch (e) {
+            console.error('fetchCustomers: ', e)
+            error.value = e
+        } finally {
+            loading.value = false
         }
-    })
-    const store = customerStore()
-    if (store.customers?.length === 0) {
-        store.fetchCustomers()
     }
-    return store
-}
 
+    return {
+        loading,
+        error,
+        loadingCustomers,
+        customersList,
+        fetchCustomers
+    }
+})

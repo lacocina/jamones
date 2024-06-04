@@ -72,6 +72,6 @@ async function newCustomer() {
 }
 
 const customerStore = useCustomerStore()
-const customers = computed(() => customerStore.getCustomers)
+const customers = computed(() => customerStore.customersList)
 
 </script>

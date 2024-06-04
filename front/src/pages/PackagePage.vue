@@ -24,9 +24,9 @@
 </template>
 
 <script setup lang="tsx">
-import {reactive, ref} from "vue";
+import {computed, reactive, ref} from "vue";
 import {useRoute} from "vue-router";
-import {api} from "../services/api.ts";
+import {usePackageStore} from "../store/packages.ts";
 import type {Customer} from "../types/Customer.ts";
 import type {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 import type {Package} from "../types/Package.ts";
@@ -41,26 +41,24 @@ import LoadingLottie from "@components/shared/LoadingLottie.vue";
 import uPadding from '@css/utilities/u-padding.module.css'
 
 const route = useRoute()
+const packageStore = usePackageStore()
 
-const isLoading = ref(true)
+const isLoading = computed(() => packageStore.loadingPackages)
 const packageOrders = reactive<PackageOrder[]>([])
 const packageData = ref<Package>()
 
-async function fetchPackageDetail() {
+async function getPackageDetail() {
   try {
-    const { data } : { data: ResponsePackageDetail } = await api.get(`packages/${route.params.packageId}`)
+    const { data } : { data : ResponsePackageDetail} = await packageStore.fetchPackageDetail(route.params.packageId as string)
     const { orders, ...responsePackageData } = data
-    await new Promise(resolve => setTimeout(resolve, 1000))
     packageOrders.splice(0, packageOrders.length, ...orders)
     packageData.value = responsePackageData
   } catch (e) {
     console.error(e)
-  } finally {
-    isLoading.value = false
   }
 }
 
-fetchPackageDetail()
+getPackageDetail()
 
 function handleOrderUpdate(customer: Customer) {
   console.log(customer.customerId)
