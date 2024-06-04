@@ -3,7 +3,7 @@
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
-      <button v-for="order in packageOrders"
+      <button v-for="order in packageData.orders"
               :key="order.orderId" type="button"
               @click="editCustomerOrder(order)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
@@ -59,8 +59,6 @@
 <script setup lang="tsx">
 import {useOverlay} from "@composables/useOverlay.ts";
 
-import type {Package} from "../types/Package.ts";
-import type {PackageOrder} from "../types/PackageOrder.ts";
 import type {Customer} from "../types/Customer.ts";
 import {ClosedModal} from "../types/ClosedModal.ts";
 
@@ -77,16 +75,16 @@ import oStackCSSM from "@css/objects/o-stack.module.css";
 import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
 import {computed} from "vue";
+import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 
 const { open } = useOverlay()
 interface Props {
-  packageData: Package
-  packageOrders: PackageOrder[]
+  packageData: ResponsePackageDetail
 }
 
 const props = defineProps<Props>()
 
-const totalOrdersLines = computed(() => props.packageOrders.reduce((acc, order) => acc + (order.lines?.length || 0), 0))
+const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, order) => acc + (order.lines?.length || 0), 0))
 
 async function editCustomerOrder(customer: Customer) {
   try {

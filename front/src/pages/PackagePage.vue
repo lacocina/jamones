@@ -4,17 +4,15 @@
     Cargando datos del paquete...
   </LoadingLottie>
 
-  <template v-else-if="packageData && packageOrders">
+  <template v-else-if="currentPackage">
 
-    <the-hero :status="packageData.status"/>
+    <the-hero :status="currentPackage?.status"/>
 
-    <opened-package v-if="packageData.status === PackageStatusOptions.Opened"
-                    :packageOrders="packageOrders"
-                    :packageData="packageData"/>
+    <opened-package v-if="currentPackage.status === PackageStatusOptions.Opened"
+                    :packageData="currentPackage"/>
 
-    <closed-package v-if="packageData.status === PackageStatusOptions.Closed"
-                    :packageOrders="packageOrders"
-                    :packageData="packageData"
+    <closed-package v-if="currentPackage.status === PackageStatusOptions.Closed"
+                    :packageData="currentPackage"
                     @order-update="handleOrderUpdate"/>
 
   </template>
@@ -24,12 +22,11 @@
 </template>
 
 <script setup lang="tsx">
-import {computed, reactive, ref} from "vue";
+import {computed, ref} from "vue";
 import {useRoute} from "vue-router";
 import {usePackageStore} from "../store/packages.ts";
 import type {Customer} from "../types/Customer.ts";
 import type {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
-import type {Package} from "../types/Package.ts";
 import type {PackageOrder} from "../types/PackageOrder.ts";
 import {PackageStatusOptions} from "../types/PackageStatus.ts";
 
@@ -42,25 +39,17 @@ const route = useRoute()
 const packageStore = usePackageStore()
 
 const isLoading = computed(() => packageStore.loadingPackages)
-const packageOrders = reactive<PackageOrder[]>([])
-const packageData = ref<Package>()
+const currentPackage = ref<ResponsePackageDetail | undefined>(undefined)
 
-async function getPackageDetail() {
-  try {
-    const { data } : { data : ResponsePackageDetail} = await packageStore.fetchPackageDetail(route.params.packageId as string)
-    const { orders, ...responsePackageData } = data
-    packageOrders.splice(0, packageOrders.length, ...orders)
-    packageData.value = responsePackageData
-  } catch (e) {
-    console.error(e)
-  }
+async function fetchPackageDetail() {
+  currentPackage.value = await packageStore.fetchPackageDetail(route.params.packageId as string)
 }
 
-getPackageDetail()
+fetchPackageDetail()
 
 function handleOrderUpdate(customer: Customer) {
   console.log(customer.customerId)
-  packageOrders?.map((item: PackageOrder) => {
+  currentPackage?.value?.orders?.map((item: PackageOrder) => {
     if (item.customerId === customer.customerId) {
       item.name = 'Antonio'
     }

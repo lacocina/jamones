@@ -54,14 +54,15 @@ export async function getPackageDetail(req, reply) {
                            FROM jamones.customer c
                                     LEFT JOIN jamones.order o ON o.customer_id = c.id AND o.package_id = p.id) customer_order)
                                      AS orders
-             FROM jamones.package p`
+             FROM jamones.package p
+             WHERE p.id = $1`,
+            [packageId]
         )
         if (currentPackage.length) {
             return {
                 ...currentPackage[0],
                 hamPrice: parseFloat(currentPackage[0].hamPrice),
-                shippingCost: parseFloat(currentPackage[0].shippingCost),
-                all: currentPackage
+                shippingCost: parseFloat(currentPackage[0].shippingCost)
             }
         } else {
             reply.status(404)
