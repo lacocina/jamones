@@ -20,7 +20,7 @@
     </template>
   </OrdersList>
 
-  <closed-package-details else :package="packageData"/>
+  <closed-package-details :package="packageData"/>
 </template>
 
 <script setup lang="tsx">
