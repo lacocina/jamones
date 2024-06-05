@@ -1,10 +1,6 @@
 <template>
 
-  <LoadingLottie v-if="isLoading">
-    Cargando datos del paquete...
-  </LoadingLottie>
-
-  <template v-else-if="currentPackage">
+  <template v-if="currentPackage">
 
     <the-hero :status="currentPackage.status"/>
 
@@ -16,15 +12,12 @@
                     @order-update="handleOrderUpdate"/>
 
   </template>
-  <template v-else>
-    Paquete con el ID {{ route.params.packageId }} no encontrado
-  </template>
+
 </template>
 
 <script setup lang="tsx">
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
-import { useNotification } from "@kyvg/vue3-notification";
 
 import {usePackageStore} from "../store/packages.ts";
 import type {Customer} from "../types/Customer.ts";
@@ -35,26 +28,16 @@ import {PackageStatusOptions} from "../types/PackageStatus.ts";
 import TheHero from "@components/shared/TheHero.vue";
 import ClosedPackage from "./ClosedPackage.vue";
 import OpenedPackage from "./OpenedPackage.vue";
-import LoadingLottie from "@components/shared/LoadingLottie.vue";
 
 const route = useRoute()
 const router = useRouter()
 const packageStore = usePackageStore()
-const { notify } = useNotification()
 
-const isLoading = computed(() => packageStore.loadingPackages)
-const currentPackage = ref<ResponsePackageDetail | undefined>(undefined)
+const currentPackage = ref<ResponsePackageDetail>()
 
 async function fetchPackageDetail() {
   const packageData = await packageStore.fetchPackageDetail(route.params.packageId as string)
-  if (!packageData) {
-    notify({
-      title: 'Error',
-      text: 'El paquete con el ID ' + route.params.packageId + ' no existe',
-      type: 'warn'
-    })
-    await router.push({name: 'home'})
-  }
+  if (!packageData) await router.push({name: 'home'})
   currentPackage.value = packageData
 }
 
