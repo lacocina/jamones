@@ -16,11 +16,10 @@ export const usePackageStore = defineStore('packages', () => {
             .find((item: ResponsePackageDetail) => !(!!item.dateClosing))
     })
     const closedPackages = computed(() => allPackageDetails.value.filter((item: ResponsePackageDetail) => !!item.dateClosing))
-    const getPackageById = computed(() => (id: string) => allPackageDetails.value.find((item: ResponsePackageDetail) => item.id.toString() === id))
 
     async function fetchAllPackageDetails() {
         try {
-            const { data } = await api.get('/packages/list')
+            const { data } : { data: ResponsePackageDetail[] } = await api.get('/packages/list')
             await new Promise(resolve => setTimeout(resolve, 2000))
             allPackageDetails.value = data
         } catch (e) {
@@ -52,7 +51,6 @@ export const usePackageStore = defineStore('packages', () => {
         allPackageDetails,
         closedPackages,
         currentPackage,
-        getPackageById,
         fetchPackageDetail,
         fetchAllPackageDetails
     }

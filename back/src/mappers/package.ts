@@ -6,12 +6,12 @@ export function packageToResponseMapper(packageParam: RawPackage): Package {
     return {
         id: packageParam.id,
         status: packageParam.status,
-        hamPrice: packageParam.ham_price,
         dateCreation: packageParam.date_creation,
         dateConfirmed: packageParam.date_confirmed,
         dateReceived: packageParam.date_received,
         dateClosing: packageParam.date_closing,
-        shippingCost: packageParam.shipping_cost,
+        hamPrice: parseFloat(packageParam.ham_price),
+        shippingCost: parseFloat(packageParam.shipping_cost),
         orders: packageParam.orders?.map(customerOrderToResponseMapper)
     }
 }

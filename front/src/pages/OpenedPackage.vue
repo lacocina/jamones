@@ -11,7 +11,7 @@
           <h2>{{ order.name }}</h2>
           <div v-if="order.lines && packageData.hamPrice" :class="textCSSM.sizeSmall">
               <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-                Precio aprox: <b>{{ order.lines.length * packageData.hamPrice * 8 }}€</b>
+                Precio aprox: <b>{{ Math.floor(order.lines.length * packageData.hamPrice * 8) }}€</b>
               </span>
           </div>
         </div>
@@ -30,7 +30,7 @@
           <h2>Total jamones</h2>
           <div v-if="packageData.hamPrice" :class="textCSSM.sizeSmall">
               <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-                Total aprox: <b>{{ totalOrdersLines * packageData.hamPrice * 8 }}€</b>
+                Total aprox: <b>{{ Math.floor(totalOrdersLines * packageData.hamPrice * 8) }}€</b>
               </span>
           </div>
         </div>
@@ -57,8 +57,10 @@
 </template>
 
 <script setup lang="tsx">
+import {computed} from "vue";
 import {useOverlay} from "@composables/useOverlay.ts";
 
+import type{ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 import type {Customer} from "../types/Customer.ts";
 import {ClosedModal} from "../types/ClosedModal.ts";
 
@@ -74,8 +76,6 @@ import oSectionCSSM from "@css/objects/o-section.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
 import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
-import {computed} from "vue";
-import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 
 const { open } = useOverlay()
 interface Props {
