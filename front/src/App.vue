@@ -1,4 +1,5 @@
 <template>
+  <the-notification/>
   <main :class="oPageCSSM.oPage">
     <router-view/>
   </main>
@@ -8,6 +9,7 @@
 <script lang="ts" setup>
 import oPageCSSM from '@css/objects/o-page.module.css'
 import OverlayController from '@components/shared/OverlayController.vue';
+import TheNotification from "@components/ui/TheNotification.vue";
 </script>
 
 <style>

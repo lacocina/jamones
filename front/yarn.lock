@@ -685,6 +685,11 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
+"@kyvg/vue3-notification@^3.2.1":
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/@kyvg/vue3-notification/-/vue3-notification-3.2.1.tgz#b7dc9f1855b43a24797acee92988dff89aefb45d"
+  integrity sha512-qn4bCBBCxW0Ya+RmHXu2SYBVwGXWsAGdlDKqCqyLryaZTbtFXi32iSSLnuKjSUVxFqQRToFc6g1zp1XLTyHrvw==
+
 "@rollup/rollup-android-arm-eabi@4.9.1":
   version "4.9.1"
   resolved "https://registry.yarnpkg.com/@rollup/rollup-android-arm-eabi/-/rollup-android-arm-eabi-4.9.1.tgz#beaf518ee45a196448e294ad3f823d2d4576cf35"

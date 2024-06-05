@@ -1,0 +1,49 @@
+:global(.vue-notification-group) {
+  padding-right: .5rem;
+}
+
+:global(.vue-notification-wrapper) {
+  overflow: visible !important;
+
+  &.custom-notification {
+    margin-top: .5rem;
+    border-left: 6px solid rgba(black, .3);
+    border-radius: var(--border-radius-light);
+    color: white;
+    position: relative;
+    padding: var(--spacing-rem-sm) var(--spacing-sm);
+
+    background-color: var(--notification-bg-color);
+  }
+}
+
+.custom-notification {
+  &,
+  &.success {
+    --notification-bg-color: var(--bg-color-feedback-success);
+  }
+
+  &.warn {
+    --notification-bg-color: var(--bg-color-feedback-warn);
+  }
+
+  &.error {
+    --notification-bg-color: var(--bg-color-feedback-error);
+  }
+
+}
+
+.close {
+  position: absolute;
+  top: .25rem;
+  right: .25rem;
+  cursor: pointer;
+  color: white;
+  border: none;
+  background-color: transparent;
+  padding: 0;
+}
+
+.title {
+  opacity: .6;
+}

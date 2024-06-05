@@ -6,7 +6,7 @@
 
   <template v-else-if="currentPackage">
 
-    <the-hero :status="currentPackage?.status"/>
+    <the-hero :status="currentPackage.status"/>
 
     <opened-package v-if="currentPackage.status === PackageStatusOptions.Opened"
                     :packageData="currentPackage"/>
@@ -23,7 +23,9 @@
 
 <script setup lang="tsx">
 import {computed, ref} from "vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
+import { useNotification } from "@kyvg/vue3-notification";
+
 import {usePackageStore} from "../store/packages.ts";
 import type {Customer} from "../types/Customer.ts";
 import type {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
@@ -36,13 +38,24 @@ import OpenedPackage from "./OpenedPackage.vue";
 import LoadingLottie from "@components/shared/LoadingLottie.vue";
 
 const route = useRoute()
+const router = useRouter()
 const packageStore = usePackageStore()
+const { notify } = useNotification()
 
 const isLoading = computed(() => packageStore.loadingPackages)
 const currentPackage = ref<ResponsePackageDetail | undefined>(undefined)
 
 async function fetchPackageDetail() {
-  currentPackage.value = await packageStore.fetchPackageDetail(route.params.packageId as string)
+  const packageData = await packageStore.fetchPackageDetail(route.params.packageId as string)
+  if (!packageData) {
+    notify({
+      title: 'Error',
+      text: 'El paquete con el ID ' + route.params.packageId + ' no existe',
+      type: 'warn'
+    })
+    await router.push({name: 'home'})
+  }
+  currentPackage.value = packageData
 }
 
 fetchPackageDetail()
