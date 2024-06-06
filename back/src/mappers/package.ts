@@ -30,7 +30,7 @@ export function customerOrderToResponseMapper(customerOrder: RawCustomerOrder): 
     }
 }
 
-export function orderLineToResponseMapper(orderLine: RawOrderLine): OrderLine {
+function orderLineToResponseMapper(orderLine: RawOrderLine): OrderLine {
     return {
         id: orderLine.id,
         orderId: orderLine.order_id,

@@ -1,42 +1,17 @@
 import { FastifyInstance } from "fastify";
-import { getDBInstance } from "../db/db.ts";
-import { updatePackage } from "../db/packages.ts";
+import { updatePackage } from "../db/update-packages.ts";
+import { updateOrder } from "../db/update-order.ts";
+import {getPackagesDB} from "../db/get-packages.ts";
 import { patchPackageToDbMapper, patchPackageToResponseMapper } from "../mappers/patch-package.ts";
-import { RawPackage } from "../types/Package.ts";
-import {packageToResponseMapper} from "../mappers/package.ts";
+import {customerOrderToResponseMapper, packageToResponseMapper} from "../mappers/package.ts";
 
 export async function getPackages(req, reply) {
     try {
-        const db = await getDBInstance()
-        const {rows: packages}: { rows: RawPackage[] } = await db.query(
-            `SELECT *,
-                    (SELECT json_agg(order_data)
-                     FROM (SELECT o.id                                  AS "order_id",
-                                  o.customer_id                         as "customer_id",
-                                  o.paid,
-                                  o.package_id,
-                                  o.note,
-                                  c.name,
-                                  c.last_name,
-                                  c.customer_alias,
-                                  (SELECT json_agg(line_data)
-                                   FROM (SELECT *
-                                         FROM jamones.order_line ol
-                                         WHERE o.id = ol.order_id) line_data) AS lines
-                           FROM jamones.order o
-                                    LEFT JOIN jamones.customer c ON o.customer_id = c.id
-                           WHERE o.package_id = p.id) order_data)
-                        AS orders
-             FROM jamones.package p`
-        )
-
-        if (packages.length) {
-            return packages?.map(packageToResponseMapper)
-        }
+        const packages = await getPackagesDB()
+        if (packages.length) return packages?.map(packageToResponseMapper)
 
         reply.status(404).send('Aún no hay paquetes')
         return []
-
     } catch (error) {
         reply.status(500).send('Error del servidor')
         return { message:'Error del servidor', error }
@@ -65,11 +40,31 @@ export async function patchPackage(req, reply) {
     }
 }
 
+export async function createOrder(req, reply) {
+    if (
+        !req.body.packageId || isNaN(parseInt(req.body.packageId))
+        || !req.body.customerId || isNaN(parseInt(req.body.customerId))
+        || !req.body.lines || isNaN(parseInt(req.body.lines))
+    ) {
+        reply.status(400).send('Falta el ID del paquete o el ID customer o las líneas o no los tipos son correctos')
+        return
+    }
+    try {
+        const responseOrder = await updateOrder(req.body)
+        return customerOrderToResponseMapper(responseOrder)
+    } catch (error) {
+        reply.status(500)
+        return { message:'Error del servidor', error }
+    }
+}
+
 export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) => {
 
     app.get('/list', (request, reply) => getPackages(request, reply))
 
     app.patch('/updatePackage/:id', (request, reply) => patchPackage(request, reply))
+
+    app.post('/createOrder', (request, reply) => createOrder(request, reply))
 
     next()
 }
