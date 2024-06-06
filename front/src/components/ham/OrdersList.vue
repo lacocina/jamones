@@ -11,10 +11,8 @@
                     ]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ order.name }}</h2>
-          <div :class="textCSSM.sizeSmall">
-              <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-                <slot name="subtitle" v-bind="order"/>
-              </span>
+          <div v-if="$slots.subtitle" :class="[textCSSM.sizeSmall, textCSSM.light, colorCSSM.fontSoft]">
+            <slot name="subtitle" v-bind="order"/>
           </div>
         </div>
         <slot name="value" v-bind="order"/>

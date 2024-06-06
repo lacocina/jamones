@@ -8,34 +8,25 @@ import {packageToResponseMapper} from "../mappers/package.ts";
 export async function getPackages(req, reply) {
     try {
         const db = await getDBInstance()
-        const { rows: packages } : { rows: RawPackage[] } = await db.query(
-            `SELECT
-                    p.id,
-                    p.date_closing,
-                    p.date_confirmed,
-                    p.date_creation,
-                    p.date_received,
-                    p.date_closing,
-                    p.ham_price,
-                    p.shipping_cost,
-                    p.status,
-                    p.opened,
-                    (SELECT json_agg(customer_order)
-                     FROM (SELECT o.id AS "order_id",
-                                  o.note,
-                                  o.package_id,
+        const {rows: packages}: { rows: RawPackage[] } = await db.query(
+            `SELECT *,
+                    (SELECT json_agg(order_data)
+                     FROM (SELECT o.id                                  AS "order_id",
+                                  o.customer_id                         as "customer_id",
                                   o.paid,
+                                  o.package_id,
+                                  o.note,
                                   c.name,
-                                  c.id AS "customer_id",
                                   c.last_name,
                                   c.customer_alias,
-                                  (SELECT json_agg(order_line)
-                                   FROM (SELECT ol.id, ol.weight
+                                  (SELECT json_agg(line_data)
+                                   FROM (SELECT *
                                          FROM jamones.order_line ol
-                                         WHERE ol.order_id = o.id) order_line) as "lines"
-                           FROM jamones.customer c
-                                    LEFT JOIN jamones.order o ON o.customer_id = c.id AND o.package_id = p.id) customer_order)
-                                     AS orders
+                                         WHERE o.id = ol.order_id) line_data) AS lines
+                           FROM jamones.order o
+                                    LEFT JOIN jamones.customer c ON o.customer_id = c.id
+                           WHERE o.package_id = p.id) order_data)
+                        AS orders
              FROM jamones.package p`
         )
 

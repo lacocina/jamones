@@ -28,20 +28,25 @@
 
 <script setup lang="ts">
 import {computed, ref} from "vue";
-import type { Customer } from "../../types/Customer.ts";
+import {useOverlay} from "@composables/useOverlay.ts";
+import {useCustomerStore} from "../../store/customers.ts";
+
 import TheModal from "@components/shared/TheModal.vue";
 import DefaultModalContent from "@components/shared/DefaultModalContent.vue";
 
 import oFlexCSSM from "@css/objects/o-flex.module.css";
 import textCSSM from "@css/utilities/text.module.css";
-import {useOverlay} from "@composables/useOverlay.ts";
 
 interface Props {
-  customer: Customer
+  customerId: number
 }
 
 const props = defineProps<Props>()
-const dialogTitle = computed(() => `¿Cuántos jamones quiere ${props.customer.name}?`)
+
+const customerStore = useCustomerStore()
+const customer = customerStore.customerById(props.customerId)
+
+const dialogTitle = computed(() => `¿Cuántos jamones quiere ${customer!.name}?`)
 
 const quantity = ref<number>(0)
 

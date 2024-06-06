@@ -5,21 +5,31 @@
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
       <button v-for="order in packageData.orders"
               :key="order.orderId" type="button"
-              @click="editCustomerOrder(order)"
+              @click="editCustomerOrder(order.customerId)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ order.name }}</h2>
-          <div v-if="order.lines && packageData.hamPrice" :class="textCSSM.sizeSmall">
+          <div v-if="packageData.hamPrice" :class="textCSSM.sizeSmall">
               <span :class="[textCSSM.light, colorCSSM.fontSoft]">
                 Precio aprox: <b>{{ Math.floor(order.lines.length * packageData.hamPrice * 8) }}€</b>
               </span>
           </div>
         </div>
+        <b :class="[textCSSM.sizeBig, colorCSSM.fontProduct]">
+          {{ order.lines.length }}
+        </b>
+      </button>
+      <button v-for="customer in emptyOrderCustomers"
+              :key="customer.customerId" type="button"
+              @click="editCustomerOrder(customer.customerId)"
+              :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
+        <div :class="oStackCSSM.xxs">
+          <h2>{{ customer.name }}</h2>
+        </div>
         <b :class="[
             textCSSM.sizeBig,
-            order.lines ? colorCSSM.fontProduct : colorCSSM.fontSoftest
-            ]">
-          {{ order.lines?.length || 0 }}
+            colorCSSM.fontSoftest]">
+          0
         </b>
       </button>
     </list-box>
@@ -59,9 +69,9 @@
 <script setup lang="tsx">
 import {computed} from "vue";
 import {useOverlay} from "@composables/useOverlay.ts";
+import {useCustomerStore} from "../store/customers.ts";
 
 import type{ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
-import type {Customer} from "../types/Customer.ts";
 import {ClosedModal} from "../types/ClosedModal.ts";
 
 import PriceBanner from "@components/ham/PriceBanner.vue";
@@ -77,23 +87,28 @@ import oStackCSSM from "@css/objects/o-stack.module.css";
 import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
 
-const { open } = useOverlay()
 interface Props {
   packageData: ResponsePackageDetail
 }
-
 const props = defineProps<Props>()
 
+const customersStore = useCustomerStore()
+
+const emptyOrderCustomers = customersStore.customersList.filter(customer => {
+    return !props.packageData.orders.some(order => order.customerId === customer.customerId)
+})
 const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, order) => acc + (order.lines?.length || 0), 0))
 
-async function editCustomerOrder(customer: Customer) {
+
+const { open } = useOverlay()
+async function editCustomerOrder(customerId: number) {
   try {
-    const { reason, value } = await open(<CustomerOrderDialog customer={ customer }/>)
+    const { reason, value } = await open(<CustomerOrderDialog customerId={ customerId }/>)
     if (reason === 'confirm') {
       if (value) {
-        console.log(`Pinia: Borra líneas de la order con customerId "${customer.customerId}" y ponle ${value} líneas`)
+        console.log(`Pinia: Borra líneas de la order con customerId "${customerId}" y ponle ${value} líneas`)
       } else {
-        console.log('Pinia: Borra todos las líneas de la Order con customerId', customer.customerId)
+        console.log('Pinia: Borra todos las líneas de la Order con customerId', customerId)
       }
     }
   } catch (e) {

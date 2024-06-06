@@ -9,7 +9,8 @@ export const useCustomerStore = defineStore('customer',() => {
     const error = ref<any | null>(null)
 
     const loadingCustomers = computed(() => loading.value)
-    const customersList = computed(() => customers.value)
+    const customersList = computed<Customer[]>(() => customers.value)
+    const customerById = computed(() => (customerId: number) => customers.value.find(customer => customer.customerId === customerId))
 
     async function fetchCustomers() {
         try {
@@ -24,10 +25,12 @@ export const useCustomerStore = defineStore('customer',() => {
     }
 
     return {
+        customers,
         loading,
         error,
         loadingCustomers,
         customersList,
+        customerById,
         fetchCustomers
     }
 })
