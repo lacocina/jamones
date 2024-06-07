@@ -57,7 +57,12 @@ export const usePackageStore = defineStore('packages', () => {
 
             const targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id === packageId)
             const orderIndex = targetPackage?.orders.findIndex((item: PackageOrder) => item.customerId === customerId)
-            if (orderIndex) targetPackage!.orders[orderIndex] = data
+
+            if (orderIndex !== -1 && orderIndex !== undefined) {
+                targetPackage!.orders[orderIndex] = data
+            } else if (targetPackage) {
+                targetPackage.orders.push(data)
+            }
         } catch (e) {
             throw e
         }
