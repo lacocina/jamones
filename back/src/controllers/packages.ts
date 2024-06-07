@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { updatePackage } from "../db/update-packages.ts";
-import { updateOrder } from "../db/update-order.ts";
+import { updateNumberOrderLinesDB } from "../db/update-order.ts";
 import {getPackagesDB} from "../db/get-packages.ts";
 import { patchPackageToDbMapper, patchPackageToResponseMapper } from "../mappers/patch-package.ts";
 import {customerOrderToResponseMapper, packageToResponseMapper} from "../mappers/package.ts";
@@ -40,7 +40,7 @@ export async function patchPackage(req, reply) {
     }
 }
 
-export async function createOrder(req, reply) {
+export async function updateNumberOrderLines(req, reply) {
     if (
         !req.body.packageId || isNaN(parseInt(req.body.packageId))
         || !req.body.customerId || isNaN(parseInt(req.body.customerId))
@@ -50,7 +50,7 @@ export async function createOrder(req, reply) {
         return
     }
     try {
-        const responseOrder = await updateOrder(req.body)
+        const responseOrder = await updateNumberOrderLinesDB(req.body)
         return customerOrderToResponseMapper(responseOrder)
     } catch (error) {
         reply.status(500)
@@ -64,7 +64,7 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
 
     app.patch('/updatePackage/:id', (request, reply) => patchPackage(request, reply))
 
-    app.post('/createOrder', (request, reply) => createOrder(request, reply))
+    app.post('/updateNumberOrderLines', (request, reply) => updateNumberOrderLines(request, reply))
 
     next()
 }

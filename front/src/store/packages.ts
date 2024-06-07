@@ -4,6 +4,7 @@ import {api} from "../services/api.ts";
 import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 import {useRouter} from "vue-router";
 import {useNotification} from "@kyvg/vue3-notification";
+import {PackageOrder} from "../types/PackageOrder.ts";
 
 export const usePackageStore = defineStore('packages', () => {
     const allPackageDetails = ref<ResponsePackageDetail[]>([])
@@ -44,6 +45,24 @@ export const usePackageStore = defineStore('packages', () => {
         return null
     }
 
+    async function updateOrder(
+        { packageId, customerId, lines }: { packageId: number, customerId: number, lines: number }
+    ) {
+        try {
+            const { data } : { data: PackageOrder } = await api.post('/packages/updateNumberOrderLines', {
+                packageId,
+                customerId,
+                lines
+            })
+
+            const targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id === packageId)
+            const orderIndex = targetPackage?.orders.findIndex((item: PackageOrder) => item.customerId === customerId)
+            if (orderIndex) targetPackage!.orders[orderIndex] = data
+        } catch (e) {
+            throw e
+        }
+    }
+
     return {
         loading,
         error,
@@ -52,6 +71,7 @@ export const usePackageStore = defineStore('packages', () => {
         closedPackages,
         currentPackage,
         fetchPackageDetail,
-        fetchAllPackageDetails
+        fetchAllPackageDetails,
+        updateOrder
     }
 })

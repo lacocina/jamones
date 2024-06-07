@@ -1,6 +1,6 @@
 <template>
   <the-modal @confirm="handleConfirm">
-    <default-modal-content :title="dialogTitle">
+    <default-modal-content :title="`¿Cuántos jamones quiere ${customerName}?`">
       <div :class="oFlexCSSM.betweenCenter">
         <div :class="textCSSM.light">
           <div :class="[textCSSM.sizeSmall]">
@@ -27,9 +27,8 @@
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {ref} from "vue";
 import {useOverlay} from "@composables/useOverlay.ts";
-import {useCustomerStore} from "../../store/customers.ts";
 
 import TheModal from "@components/shared/TheModal.vue";
 import DefaultModalContent from "@components/shared/DefaultModalContent.vue";
@@ -39,21 +38,17 @@ import textCSSM from "@css/utilities/text.module.css";
 
 interface Props {
   customerId: number
+  customerName: string
+  lines: number
 }
 
 const props = defineProps<Props>()
-
-const customerStore = useCustomerStore()
-const customer = customerStore.customerById(props.customerId)
-
-const dialogTitle = computed(() => `¿Cuántos jamones quiere ${customer!.name}?`)
-
-const quantity = ref<number>(0)
+const quantity = ref<number>(props.lines)
 
 const { close } = useOverlay()
 function handleConfirm() {
   close({
-    reason: 'confirm',
+    reason: quantity.value !== props.lines ? 'confirm' : 'cancel',
     value: quantity.value
   })
 }

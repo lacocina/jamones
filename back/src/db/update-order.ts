@@ -83,7 +83,7 @@ async function getBuildOrder(db: Client, orderId: number) {
     return responseOrder[0]
 }
 
-export async function updateOrder(
+export async function updateNumberOrderLinesDB(
     { packageId, customerId, lines } : { packageId: number, customerId: number, lines: number },
 ) : Promise<RawCustomerOrder> {
     const db = await getDBInstance()

@@ -5,7 +5,7 @@
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
       <button v-for="order in packageData.orders"
               :key="order.orderId" type="button"
-              @click="editCustomerOrder(order.customerId)"
+              @click="editCustomerOrder(order, order.lines.length)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ order.name }}</h2>
@@ -21,7 +21,7 @@
       </button>
       <button v-for="customer in emptyOrderCustomers"
               :key="customer.customerId" type="button"
-              @click="editCustomerOrder(customer.customerId)"
+              @click="editCustomerOrder(customer, 0)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ customer.name }}</h2>
@@ -70,7 +70,9 @@
 import {computed} from "vue";
 import {useOverlay} from "@composables/useOverlay.ts";
 import {useCustomerStore} from "../store/customers.ts";
+import {usePackageStore} from "../store/packages.ts";
 
+import type {Customer} from "../types/Customer.ts";
 import type{ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 import {ClosedModal} from "../types/ClosedModal.ts";
 
@@ -93,6 +95,7 @@ interface Props {
 const props = defineProps<Props>()
 
 const customersStore = useCustomerStore()
+const packagesStore = usePackageStore()
 
 const emptyOrderCustomers = customersStore.customersList.filter(customer => {
     return !props.packageData.orders.some(order => order.customerId === customer.customerId)
@@ -101,19 +104,29 @@ const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, or
 
 
 const { open } = useOverlay()
-async function editCustomerOrder(customerId: number) {
+async function editCustomerOrder(item: Customer, lines: number) {
   try {
-    const { reason, value } = await open(<CustomerOrderDialog customerId={ customerId }/>)
+    const { reason, value } = await open(
+        <CustomerOrderDialog
+            customerId={ item.customerId }
+            customerName={ item.name }
+            lines={ lines }
+        />
+    )
     if (reason === 'confirm') {
       if (value) {
-        console.log(`Pinia: Borra líneas de la order con customerId "${customerId}" y ponle ${value} líneas`)
+        await packagesStore.updateOrder({
+          packageId: props.packageData.id,
+          customerId: item.customerId,
+          lines: value
+        })
       } else {
-        console.log('Pinia: Borra todos las líneas de la Order con customerId', customerId)
+        console.log('Pinia: Borra todos las líneas de la Order con customerId', item.name)
       }
     }
   } catch (e) {
     if (e !== ClosedModal) {
-      console.log('Err')
+      console.error('Error: ', e)
     }
   }
 }

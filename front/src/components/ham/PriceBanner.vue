@@ -10,9 +10,10 @@
 
 <script setup lang="tsx">
 import { computed } from "vue";
-import { ClosedModal } from "../../types/ClosedModal.ts";
 import { useOverlay } from "@composables/useOverlay.ts";
 import { api } from "../../services/api.ts";
+
+import { ClosedModal } from "../../types/ClosedModal.ts";
 
 import TheBanner from "@components/shared/TheBanner.vue";
 import PriceDialog from "@components/ham/PriceDialog.vue";
@@ -38,9 +39,11 @@ const { open } = useOverlay()
 async function openDialog() {
   try {
     const response = await open(<PriceDialog price={props.modelValue}/>)
-    if (response.reason === 'confirm' && response.value) {
+    if (response.reason === 'confirm') {
       try {
-        const { data } = await api.patch(`packages/updatePackage/${props.packageId}`, { hamPrice: response.value })
+        const { data } = await api.patch(
+            `packages/updatePackage/${props.packageId}`,
+            { hamPrice: response.value || null })
         emit('update:model-value', data.hamPrice)
       } catch (e) {
         console.error(e)
