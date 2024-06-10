@@ -107,6 +107,7 @@ export async function updateNumberOrderLinesDB(
         return responseOrder
 
     } catch (e) {
+        await db.query(`ROLLBACK`)
         console.log(e)
         return e
     }
