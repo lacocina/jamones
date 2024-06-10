@@ -45,7 +45,7 @@
           </div>
         </div>
         <h4 :class="[textCSSM.sizeBig,colorCSSM.fontProduct]">
-          {{ totalOrdersLines }}
+          {{ packagesStore.totalPackagesOrdersLines(packageData.id) }}
         </h4>
       </div>
     </list-box>

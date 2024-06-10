@@ -20,8 +20,8 @@
           <order-status v-if="status" :status="status"/>
         </div>
         <div>
-          <h2 :class="textCSSM.sizeBiggest">Titulo</h2>
-          <h4 :class="textCSSM.light">Subtitulo</h4>
+          <h2 :class="textCSSM.sizeBiggest">{{ title }}</h2>
+          <h4 v-if="subtitle" :class="[textCSSM.sizeSmall, textCSSM.light]">{{ subtitle }}</h4>
         </div>
       </div>
       <figure :class="cHeroCSSM.imgWrapper">
@@ -48,6 +48,8 @@ const route = useRoute()
 
 const isHome = route.name === 'home'
 interface Props {
+  title: string
+  subtitle?: string
   status?: PackageStatusOptions
   inactive?: boolean
   to?: RouteLocationNamedRaw

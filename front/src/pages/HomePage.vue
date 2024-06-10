@@ -2,6 +2,8 @@
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
     <the-hero
         v-if="currentPackage"
+        :title="titlePage"
+        :subtitle="subtitlePage"
         :status="currentPackage.status"
         :to="{ name: 'package', params: { packageId: currentPackage.id } }"/>
 
@@ -52,10 +54,31 @@ import cListBoxCSSM from '@css/components/molecules/c-list-box.module.css';
 import textCSSM from "@css/utilities/text.module.css";
 import colorCSSM from "@css/utilities/colors.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
+import {PackageStatusOptions} from "../types/PackageStatus.ts";
 
 const router = useRouter()
 const packageStore = usePackageStore()
 
 const currentPackage = computed(() => packageStore.currentPackage)
 const previousPackages = computed(() => packageStore.closedPackages)
+
+const titlePage = computed(() => {
+  if (!currentPackage.value) return 'Nuevo paquete'
+  if (currentPackage.value.status === PackageStatusOptions.Opened) {
+    return 'Pedido activo'
+  }
+  if (currentPackage.value.status === PackageStatusOptions.OnTheWay) {
+    return 'Pedido en camino'
+  }
+  return format(currentPackage.value.dateReceived!, 'LLLL yyyy', {locale: es})
+})
+
+const subtitlePage = computed(() => {
+  if (!currentPackage.value) return
+
+  let subtitle = `${currentPackage.value?.orders.length} pedidos`
+  const totalLines = packageStore.totalPackagesOrdersLines(currentPackage.value?.id || 0)
+  subtitle += ` - ${totalLines} Jamones`
+  return subtitle
+})
 </script>

@@ -1,11 +1,14 @@
 <template>
-  <the-hero/>
+  <the-hero title="Listado de clientes"
+            subtitle="Añade o edita cualquier cliente"/>
 
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
-    <list-box title="Listado de clientes" default-color>
+    <list-box title="Listado de clientes"
+              description="Editar"
+              default-color>
       <template v-if="customers?.length">
-        <div v-for="customer in customers"
+        <button v-for="customer in customers"
                 :key="customer.customerId"
                 @click="editCustomer(customer)"
                 :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
@@ -13,7 +16,7 @@
           <span class="material-symbols-rounded" :class="colorCSSM.fontSoft">
             chevron_right
           </span>
-        </div>
+        </button>
       </template>
       <div :class="[cListBoxCSSM.item, colorCSSM.fontSoft]" v-else>
         Aún no hay ningún cliente añadido

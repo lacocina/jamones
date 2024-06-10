@@ -2,7 +2,6 @@ import {computed, ref} from "vue";
 import {defineStore} from "pinia";
 import {api} from "../services/api.ts";
 import {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
-import {useRouter} from "vue-router";
 import {useNotification} from "@kyvg/vue3-notification";
 import {PackageOrder} from "../types/PackageOrder.ts";
 
@@ -17,6 +16,13 @@ export const usePackageStore = defineStore('packages', () => {
             .find((item: ResponsePackageDetail) => !(!!item.dateClosing))
     })
     const closedPackages = computed(() => allPackageDetails.value.filter((item: ResponsePackageDetail) => !!item.dateClosing))
+    const totalPackagesOrdersLines = computed(() =>
+        (packageId: number) => {
+            return allPackageDetails.value
+                .find((item: ResponsePackageDetail) => item.id === packageId)
+                ?.orders.reduce((acc, order) => acc + (order.lines?.length || 0), 0)
+                || 0
+    })
 
     async function fetchAllPackageDetails() {
         try {
@@ -32,15 +38,14 @@ export const usePackageStore = defineStore('packages', () => {
     }
 
     async function fetchPackageDetail(id: string) : Promise<ResponsePackageDetail | any> {
-        const router = useRouter()
         const { notify } = useNotification()
         let targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id.toString() === id)
         if (targetPackage) return targetPackage
 
-        await router.push({ name: 'home'})
         notify({
             title: 'Error',
             text: 'No se encontró el paquete con el identificador ' + id,
+            type: 'error'
         })
         return null
     }
@@ -48,23 +53,23 @@ export const usePackageStore = defineStore('packages', () => {
     async function updateOrder(
         { packageId, customerId, lines }: { packageId: number, customerId: number, lines: number }
     ) {
-        try {
-            const { data } : { data: PackageOrder } = await api.post('/packages/updateNumberOrderLines', {
-                packageId,
-                customerId,
-                lines
-            })
+        const { data } : { data: PackageOrder } = await api.post('/packages/updateNumberOrderLines', {
+            packageId,
+            customerId,
+            lines
+        })
 
-            const targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id === packageId)
-            const orderIndex = targetPackage?.orders.findIndex((item: PackageOrder) => item.customerId === customerId)
+        const targetPackage = allPackageDetails.value.find((item: ResponsePackageDetail) => item.id === packageId)
+        if (!targetPackage) {
+            throw new Error('No se encontró el paquete con el identificador ' + packageId)
+        }
 
-            if (orderIndex !== -1 && orderIndex !== undefined) {
-                targetPackage!.orders[orderIndex] = data
-            } else if (targetPackage) {
-                targetPackage.orders.push(data)
-            }
-        } catch (e) {
-            throw e
+        const orderIndex = targetPackage.orders.findIndex((item: PackageOrder) => item.customerId === customerId)
+
+        if (orderIndex !== -1) {
+            targetPackage.orders[orderIndex] = data
+        } else if (targetPackage) {
+            targetPackage.orders.push(data)
         }
     }
 
@@ -74,6 +79,7 @@ export const usePackageStore = defineStore('packages', () => {
         loadingPackages,
         allPackageDetails,
         closedPackages,
+        totalPackagesOrdersLines,
         currentPackage,
         fetchPackageDetail,
         fetchAllPackageDetails,
