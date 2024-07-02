@@ -12,7 +12,9 @@
                    :to="{ name: 'package', params: { packageId: order.id } }"
                    :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div>
-          <h2>{{ format(order.dateReceived, 'LLLL yyyy', {locale: es}) }}</h2>
+          <h2 :class="uTextTransformCSSM.capitalize">
+            {{ format(order.dateReceived, 'LLLL yyyy', {locale: es}) }}
+          </h2>
           <div :class="textCSSM.sizeSmall">
             <span :class="[colorCSSM.fontProduct, colorCSSM.ham]">
               {{ order.shippingCost }}€
@@ -44,6 +46,8 @@ import {usePackageStore} from "../store/packages.ts";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
+import {PackageStatusOptions} from "../types/PackageStatus.ts";
+
 import TheHero from "@components/shared/TheHero.vue";
 import TheBanner from "@components/shared/TheBanner.vue";
 import ListBox from "@components/shared/ListBox.vue";
@@ -54,7 +58,7 @@ import cListBoxCSSM from '@css/components/molecules/c-list-box.module.css';
 import textCSSM from "@css/utilities/text.module.css";
 import colorCSSM from "@css/utilities/colors.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
-import {PackageStatusOptions} from "../types/PackageStatus.ts";
+import uTextTransformCSSM from "@css/utilities/u-text-transform.module.css";
 
 const router = useRouter()
 const packageStore = usePackageStore()
