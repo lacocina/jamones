@@ -20,7 +20,7 @@ export const usePackageStore = defineStore('packages', () => {
         (packageId: number) => {
             return allPackageDetails.value
                 .find((item: ResponsePackageDetail) => item.id === packageId)
-                ?.orders.reduce((acc, order) => acc + (order.lines?.length || 0), 0)
+                ?.orders.reduce((acc, order) => acc + (order.preLines), 0)
                 || 0
     })
 

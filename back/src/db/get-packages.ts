@@ -11,6 +11,7 @@ export async function getPackagesDB() {
                                   o.paid,
                                   o.package_id,
                                   o.note,
+                                  o.pre_lines,
                                   c.name,
                                   c.last_name,
                                   c.customer_alias,

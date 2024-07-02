@@ -5,18 +5,18 @@
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
       <button v-for="order in packageData.orders"
               :key="order.orderId" type="button"
-              @click="editCustomerOrder(order, order.lines.length)"
+              @click="editCustomerOrder(order, order.preLines)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ order.name }}</h2>
           <div v-if="packageData.hamPrice" :class="textCSSM.sizeSmall">
               <span :class="[textCSSM.light, colorCSSM.fontSoft]">
-                Precio aprox: <b>{{ Math.floor(order.lines.length * packageData.hamPrice * 8) }}€</b>
+                Precio aprox: <b>{{ Math.floor(order.preLines * packageData.hamPrice * 8) }}€</b>
               </span>
           </div>
         </div>
         <b :class="[textCSSM.sizeBig, colorCSSM.fontProduct]">
-          {{ order.lines.length }}
+          {{ order.preLines }}
         </b>
       </button>
       <button v-for="customer in emptyOrderCustomers"
@@ -100,7 +100,7 @@ const packagesStore = usePackageStore()
 const emptyOrderCustomers = customersStore.customersList.filter(customer => {
     return !props.packageData.orders.some(order => order.customerId === customer.customerId)
 })
-const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, order) => acc + (order.lines?.length || 0), 0))
+const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, order) => acc + (order.preLines), 0))
 
 
 const { open } = useOverlay()

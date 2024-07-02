@@ -24,6 +24,7 @@ export function customerOrderToResponseMapper(customerOrder: RawCustomerOrder): 
         note: customerOrder.note,
         name: customerOrder.name,
         lastName: customerOrder.last_name,
+        preLines: customerOrder.pre_lines,
         paid: customerOrder.paid,
         customerAlias: customerOrder.customer_alias,
         lines: customerOrder.lines?.map(orderLineToResponseMapper)
@@ -33,7 +34,9 @@ export function customerOrderToResponseMapper(customerOrder: RawCustomerOrder): 
 function orderLineToResponseMapper(orderLine: RawOrderLine): OrderLine {
     return {
         id: orderLine.id,
+        packageId: orderLine.packageId,
         orderId: orderLine.order_id,
+        price: orderLine.price,
         weight: orderLine.weight
     }
 }

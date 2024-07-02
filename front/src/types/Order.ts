@@ -5,6 +5,7 @@ export interface Order {
     packageId: number
     customerId: number
     paid: boolean
+    preLines: number
     lines: OrderLine[]
     note?: string
 }

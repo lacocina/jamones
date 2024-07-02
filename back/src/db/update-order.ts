@@ -72,7 +72,9 @@ async function getBuildOrder(db: Client, orderId: number) {
             (SELECT json_agg(line_data)
              FROM (SELECT
                        ol.id,
+                       ol.package_id,
                        ol.order_id,
+                       ol.price,
                        ol.weight
                    FROM jamones.order_line ol
                    WHERE o.id = ol.order_id) line_data) AS lines
