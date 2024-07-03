@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-import {RequestAdapterParams, VitePluginNode} from 'vite-plugin-node';
+import {VitePluginNode} from 'vite-plugin-node';
 import { Hono } from 'hono'
 
 export default defineConfig({

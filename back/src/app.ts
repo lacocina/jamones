@@ -5,7 +5,7 @@ import { registerSwagger } from "./swagger.ts";
 import cors from "@fastify/cors";
 
 export const app = fastify()
-if (!import.meta.env.PROD) {
+if (!process.env.PROD) {
   registerSwagger(app)
 }
 
@@ -62,5 +62,11 @@ app.put('/:id', {
     ]
   }
 }, async () => ({ message: 'Hello world!' }))
-app.ready()
 
+// Run the server!
+try {
+  await app.listen({ port: 3000 })
+} catch (err) {
+  app.log.error(err)
+  process.exit(1)
+}

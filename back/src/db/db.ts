@@ -1,7 +1,7 @@
-import { Client } from "pg";
+import pg from "pg";
 
 export async function getDBInstance() {
-    const client = new Client("postgresql://lopollo@localhost:5432/jamones")
+    const client = new pg.Client("postgresql://lopollo@localhost:5432/jamones")
 
     client.on("error", (err) => {
         console.error('Hello Error connecting to db', err.stack)
