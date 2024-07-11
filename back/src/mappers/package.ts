@@ -34,7 +34,6 @@ export function customerOrderToResponseMapper(customerOrder: RawCustomerOrder): 
 function orderLineToResponseMapper(orderLine: RawOrderLine): OrderLine {
     return {
         id: orderLine.id,
-        packageId: orderLine.packageId,
         orderId: orderLine.order_id,
         price: orderLine.price,
         weight: orderLine.weight

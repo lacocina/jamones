@@ -73,6 +73,20 @@ export const usePackageStore = defineStore('packages', () => {
         }
     }
 
+    async function deleteOrder(
+        { orderId }: { orderId: number }
+    ) {
+        await api.delete(`/packages/order/${orderId}`)
+        const targetPackage = allPackageDetails.value.find((pack) => {
+            return pack.id === currentPackage.value?.id
+        })
+
+        if (targetPackage) {
+            const orderIndex = targetPackage?.orders.findIndex(order => order.orderId === orderId)
+            targetPackage?.orders.splice(orderIndex, 1)
+        }
+    }
+
     return {
         loading,
         error,
@@ -83,6 +97,7 @@ export const usePackageStore = defineStore('packages', () => {
         currentPackage,
         fetchPackageDetail,
         fetchAllPackageDetails,
-        updateOrder
+        updateOrder,
+        deleteOrder
     }
 })

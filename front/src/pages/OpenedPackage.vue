@@ -5,7 +5,7 @@
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
       <button v-for="order in packageData.orders"
               :key="order.orderId" type="button"
-              @click="editCustomerOrder(order, order.preLines)"
+              @click="editCustomerOrder(order, order.preLines, order.orderId)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ order.name }}</h2>
@@ -21,7 +21,7 @@
       </button>
       <button v-for="customer in emptyOrderCustomers"
               :key="customer.customerId" type="button"
-              @click="editCustomerOrder(customer, 0)"
+              @click="editCustomerOrder(customer, 0, null)"
               :class="[cListBoxCSSM.item, oFlexCSSM.betweenCenter]">
         <div :class="oStackCSSM.xxs">
           <h2>{{ customer.name }}</h2>
@@ -88,6 +88,7 @@ import oSectionCSSM from "@css/objects/o-section.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
 import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
+import {PackageOrder} from "../types/PackageOrder.ts";
 
 interface Props {
   packageData: ResponsePackageDetail
@@ -97,14 +98,14 @@ const props = defineProps<Props>()
 const customersStore = useCustomerStore()
 const packagesStore = usePackageStore()
 
-const emptyOrderCustomers = customersStore.customersList.filter(customer => {
-    return !props.packageData.orders.some(order => order.customerId === customer.customerId)
-})
+const emptyOrderCustomers = computed(() => customersStore.customersList.filter(customer => {
+  return !props.packageData.orders.some(order => order.customerId === customer.customerId)
+}))
 const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, order) => acc + (order.preLines), 0))
 
 
 const { open } = useOverlay()
-async function editCustomerOrder(item: Customer, lines: number) {
+async function editCustomerOrder(item: Customer, lines: number, orderId: number | null) {
   try {
     const { reason, value } = await open(
         <CustomerOrderDialog
@@ -120,8 +121,8 @@ async function editCustomerOrder(item: Customer, lines: number) {
           customerId: item.customerId,
           lines: value
         })
-      } else {
-        console.log('Pinia: Borra todos las líneas de la Order con customerId', item.name)
+      } else if (orderId) {
+        await packagesStore.deleteOrder({ orderId })
       }
     }
   } catch (e) {

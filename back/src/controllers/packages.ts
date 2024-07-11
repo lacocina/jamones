@@ -58,6 +58,15 @@ export async function updateNumberOrderLines(req, reply) {
     }
 }
 
+export async function deleteOrder(req, reply) {
+    try {
+        return { message: 'Delete' }
+    } catch (error) {
+        reply.status(500)
+        return { message:'Error del servidor', error }
+    }
+}
+
 export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) => {
 
     app.get('/list', (request, reply) => getPackages(request, reply))
@@ -65,6 +74,8 @@ export const registerPackagesRoutes = (app: FastifyInstance, opts, next: any) =>
     app.patch('/updatePackage/:id', (request, reply) => patchPackage(request, reply))
 
     app.post('/updateNumberOrderLines', (request, reply) => updateNumberOrderLines(request, reply))
+
+    app.delete('/order/:id', (request, reply) => deleteOrder(request, reply))
 
     next()
 }

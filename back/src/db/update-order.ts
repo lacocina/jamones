@@ -66,18 +66,10 @@ async function getBuildOrder(db: Client, orderId: number) {
             o.paid,
             o.package_id,
             o.note,
+            o.pre_lines,
             c.name,
             c.last_name,
-            c.customer_alias,
-            (SELECT json_agg(line_data)
-             FROM (SELECT
-                       ol.id,
-                       ol.package_id,
-                       ol.order_id,
-                       ol.price,
-                       ol.weight
-                   FROM jamones.order_line ol
-                   WHERE o.id = ol.order_id) line_data) AS lines
+            c.customer_alias
         FROM jamones."order" o
             LEFT JOIN jamones.customer c ON o.customer_id = c.id
         WHERE o.id = $1`,
@@ -97,11 +89,11 @@ export async function updateNumberOrderLinesDB(
         const orderId = await resetOrCreateOrder(db, packageId, customerId)
 
         // Agregamos los lines
-        for (let i = 0; i < lines; i++) {
-            await db.query(`
-                INSERT INTO jamones."order_line" (order_id) VALUES ($1)`,
-                [orderId])
-        }
+        await db.query(`
+            UPDATE jamones."order"
+            SET pre_lines = $1
+            WHERE id = $2`,
+            [lines, orderId])
 
         const responseOrder: RawCustomerOrder = await getBuildOrder(db, orderId)
         await db.query(`COMMIT`)
