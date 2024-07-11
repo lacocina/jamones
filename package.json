@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "concurrently \"yarn dev:front\" \"yarn dev:back\"",
+    "dev": "yarn dev:front",
     "dev:front": "(cd front && yarn dev)",
     "dev:back": "(cd back && yarn dev)"
   },

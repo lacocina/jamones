@@ -66,7 +66,8 @@ app.put('/:id', {
 // Run the server!
 try {
   await app.listen({ port: 3000 })
+  console.log('Running back on port 3000')
 } catch (err) {
-  app.log.error(err)
+  console.error(err)
   process.exit(1)
 }
