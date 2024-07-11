@@ -7,7 +7,7 @@
       soft ? cBannerCSSM.soft : ''
       ]">
     <div :class="oStackCSSM.md">
-      <div :class="oFlexCSSM.betweenEnd">
+      <div v-if="title" :class="oFlexCSSM.betweenEnd">
         <div :class="oFlexCSSM.startCenter">
           <span v-if="symbol" class="material-symbols-rounded">
             {{ symbol }}
@@ -43,7 +43,7 @@ import oStackCSSM from "@css/objects/o-stack.module.css";
 
 
 interface Props {
-  title: string
+  title?: string
   buttonText?: string
   reverseBorder?: boolean
   soft?: boolean

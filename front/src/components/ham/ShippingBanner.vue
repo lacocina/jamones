@@ -10,11 +10,13 @@
 
 <script setup lang="tsx">
 import { computed } from "vue";
+
+import {api} from "../../services/api.ts";
 import { useOverlay } from "@composables/useOverlay.ts";
 import { ClosedModal } from "../../types/ClosedModal.ts";
+
 import TheBanner from "@components/shared/TheBanner.vue";
 import ShippingDialog from "@components/ham/ShippingDialog.vue";
-import {api} from "../../services/api.ts";
 
 interface Props {
   modelValue?: number

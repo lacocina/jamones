@@ -1,5 +1,7 @@
 <template>
 
+  <DeliveryBanner v-if="isOnTheWay"/>
+
   <section :class="[oSectionCSSM.oSection, oStackCSSM.sm]">
 
     <list-box title="Pedidos de los clientes" description="Jamones" default-color>
@@ -57,10 +59,19 @@
   <shipping-banner :package-id="packageData.id"
                    v-model.number="packageData.shippingCost"/>
 
-  <the-banner title="¿Ya está todo listo?"
+  <the-banner v-if="isOnTheWay"
+              title="¿Ya ha llegado"
+              button-text="!Sí, ya ha llegado!"
+              @click="confirmArrived"
+              soft>
+    Si ya está aquí el jamón continua para apuntar a los que vayan pagando.
+  </the-banner>
+
+  <the-banner v-else
+              title="¿Ya está todo listo?"
               button-text="Confirmar pedido"
-              disabled
-              disabled-message="Falta añadir medio jamón"
+              @click="confirmPackage"
+              :disabled="!packageData.orders?.length"
               soft>
     Si ya está todo preparado para pedir puedes continuar para indicar que el pedido está de camino.
   </the-banner>
@@ -68,19 +79,24 @@
 
 <script setup lang="tsx">
 import {computed} from "vue";
+import { api } from "../services/api.ts";
 import {useOverlay} from "@composables/useOverlay.ts";
 import {useCustomerStore} from "../store/customers.ts";
 import {usePackageStore} from "../store/packages.ts";
 
 import type {Customer} from "../types/Customer.ts";
-import type{ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
+import type {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
+import {PackageStatusOptions} from "../types/PackageStatus.ts";
 import {ClosedModal} from "../types/ClosedModal.ts";
 
 import PriceBanner from "@components/ham/PriceBanner.vue";
 import ShippingBanner from "@components/ham/ShippingBanner.vue";
 import TheBanner from "@components/shared/TheBanner.vue";
 import CustomerOrderDialog from "@components/ham/CustomerOrderDialog.vue";
+import OrdersSummaryDialog from "@components/ham/OrdersSummaryDialog.vue";
+import ShippingDialog from "@components/ham/ShippingDialog.vue"
 import ListBox from "@components/shared/ListBox.vue";
+import DeliveryBanner from "@components/ham/DeliveryBanner.vue";
 
 import colorCSSM from "@css/utilities/colors.module.css";
 import textCSSM from "@css/utilities/text.module.css";
@@ -88,7 +104,6 @@ import oSectionCSSM from "@css/objects/o-section.module.css";
 import oStackCSSM from "@css/objects/o-stack.module.css";
 import cListBoxCSSM from "@css/components/molecules/c-list-box.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
-import {PackageOrder} from "../types/PackageOrder.ts";
 
 interface Props {
   packageData: ResponsePackageDetail
@@ -102,6 +117,7 @@ const emptyOrderCustomers = computed(() => customersStore.customersList.filter(c
   return !props.packageData.orders.some(order => order.customerId === customer.customerId)
 }))
 const totalOrdersLines = computed(() => props.packageData.orders.reduce((acc, order) => acc + (order.preLines), 0))
+const isOnTheWay = computed(() => props.packageData.status === PackageStatusOptions.OnTheWay)
 
 
 const { open } = useOverlay()
@@ -128,6 +144,49 @@ async function editCustomerOrder(item: Customer, lines: number, orderId: number 
   } catch (e) {
     if (e !== ClosedModal) {
       console.error('Error: ', e)
+    }
+  }
+}
+
+async function confirmPackage () {
+  try {
+    const { reason } = await open(
+        <OrdersSummaryDialog orderList={ props.packageData.orders }/>
+    )
+    if (reason === 'confirm') {
+      const { data } = await api.patch(
+          `packages/updatePackage/${props.packageData.id}`,
+          { status: PackageStatusOptions.OnTheWay }
+      )
+      console.log(data)
+    }
+  } catch (e) {
+    if (e !== ClosedModal) {
+      console.error('Error: ', e)
+    }
+  }
+}
+
+async function confirmArrived () {
+  try {
+    const response = await open(<ShippingDialog price={props.packageData.shippingCost}/>)
+    if (response.reason === 'confirm' && response.value) {
+      try {
+        const { data } = await api.patch(
+            `packages/updatePackage/${props.packageData.id}`,
+            {
+              shippingCost: response.value,
+              status: PackageStatusOptions.Pending
+            }
+        )
+        console.log(data)
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  } catch (e) {
+    if (e !== ClosedModal) {
+      console.log('Err')
     }
   }
 }

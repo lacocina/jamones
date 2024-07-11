@@ -6,8 +6,11 @@
               :title="titlePage"
               :subtitle="subtitlePage"/>
 
-    <opened-package v-if="currentPackage.status === PackageStatusOptions.Opened"
+    <opened-package v-if="currentPackage.status === PackageStatusOptions.Opened || currentPackage.status === PackageStatusOptions.OnTheWay"
                     :packageData="currentPackage"/>
+
+    <pending-package v-if="currentPackage.status === PackageStatusOptions.Pending"
+                     :packageData="currentPackage"/>
 
     <closed-package v-if="currentPackage.status === PackageStatusOptions.Closed"
                     :packageData="currentPackage"
@@ -33,6 +36,7 @@ import {PackageStatusOptions} from "../types/PackageStatus.ts";
 import TheHero from "@components/shared/TheHero.vue";
 import ClosedPackage from "./ClosedPackage.vue";
 import OpenedPackage from "./OpenedPackage.vue";
+import PendingPackage from "./PendingPackage.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -58,6 +62,9 @@ const titlePage = computed(() => {
   }
   if (currentPackage.value.status === PackageStatusOptions.OnTheWay) {
     return 'Pedido en camino'
+  }
+  if (currentPackage.value.status === PackageStatusOptions.Pending) {
+    return 'Pendiente de pago'
   }
   return format(currentPackage.value.dateReceived!, 'LLLL yyyy', {locale: es})
 })

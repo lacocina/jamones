@@ -74,6 +74,9 @@ const titlePage = computed(() => {
   if (currentPackage.value.status === PackageStatusOptions.OnTheWay) {
     return 'Pedido en camino'
   }
+  if (currentPackage.value.status === PackageStatusOptions.Pending) {
+    return 'Pendiente de pago'
+  }
   return format(currentPackage.value.dateReceived!, 'LLLL yyyy', {locale: es})
 })
 

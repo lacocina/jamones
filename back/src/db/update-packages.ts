@@ -3,11 +3,21 @@ import {RawPackageSimpleUpdate} from "../types/PackageSimple.ts";
 
 export async function updatePackage(packageId: number, rawPackage: RawPackageSimpleUpdate) {
     const db = await getDBInstance()
+    const log = `UPDATE jamones.package SET ${Object.entries(rawPackage)
+        .filter(([key, value]) => value !== undefined)
+        .map(([key, value]) => {
+            const finalValue = typeof value === "string" ? `'${value}'` : value
+            return `${key} = ${finalValue}`
+        }).join(', ')}`
+    console.log(log)
     return await db.query(
-        `UPDATE jamones.package ${
+        `UPDATE jamones.package SET ${
             Object.entries(rawPackage)
                 .filter(([key, value]) => value !== undefined)
-                .map(([key, value]) => `SET ${key} = ${value}`)
+                .map(([key, value]) => {
+                    const finalValue = typeof value === "string" ? `'${value}'` : value
+                    return `${key} = ${finalValue}`
+                })
                 .join(', ')
         }
         WHERE id = ${packageId}

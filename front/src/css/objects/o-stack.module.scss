@@ -5,6 +5,7 @@
   display: grid;
   --o-stack-current-size: var(--spacing-rem-md);
   row-gap: var(--o-stack-current-size);
+  align-content: start;
 }
 
 @include current-size.t-object-current-size('o-stack', ('xxs', 'xs', 'sm', 'md', 'xl')) {

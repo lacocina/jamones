@@ -27,7 +27,6 @@
     "postcss-normalize": "^10.0.1",
     "postcss-plugin": "^1.0.0",
     "postcss-preset-env": "^9.3.0",
-    "sass": "^1.69.5",
     "sass-loader": "^13.3.2",
     "typescript": "5.1.6",
     "vite": "5.0.4",

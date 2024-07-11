@@ -2,6 +2,7 @@
   display: grid;
   --o-stack-current-size: var(--spacing-rem-md);
   row-gap: var(--o-stack-current-size);
+  align-content: start;
 }
 
 .xxs {

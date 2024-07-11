@@ -10,6 +10,6 @@
 
 <script setup lang="ts">
 import textCSSM from "@css/utilities/text.module.css";
-import lottieLoading from "@assets/lottie/1717083061969.json";
+import lottieLoading from "@assets/lottie/loading.json";
 import uPadding from '@css/utilities/u-padding.module.css'
 </script>
