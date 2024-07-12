@@ -30,4 +30,9 @@
   border-bottom: var(--current-color) var(--border-with-default) solid;
 }
 
+.separator {
+  display: block;
+  border-top: var(--bd-default);
+}
+
 /*# sourceMappingURL=c-list-box.module.css.map */

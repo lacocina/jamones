@@ -68,14 +68,8 @@ const previousPackages = computed(() => packageStore.closedPackages)
 
 const titlePage = computed(() => {
   if (!currentPackage.value) return 'Nuevo paquete'
-  if (currentPackage.value.status === PackageStatusOptions.Opened) {
+  if (currentPackage.value.status !== PackageStatusOptions.Closed) {
     return 'Pedido activo'
-  }
-  if (currentPackage.value.status === PackageStatusOptions.OnTheWay) {
-    return 'De camino'
-  }
-  if (currentPackage.value.status === PackageStatusOptions.Pending) {
-    return 'Pendiente de pago'
   }
   return format(currentPackage.value.dateReceived!, 'LLLL yyyy', {locale: es})
 })

@@ -53,11 +53,7 @@
     </list-box>
   </section>
 
-  <price-banner :package-id="packageData.id"
-                v-model.number="packageData.hamPrice"/>
-
-  <shipping-banner :package-id="packageData.id"
-                   v-model.number="packageData.shippingCost"/>
+  <slot/>
 
   <the-banner v-if="!isOnTheWay"
               title="¿Ya está todo listo?"
@@ -89,14 +85,13 @@ import type {ResponsePackageDetail} from "../types/ResponsePackageDetail.ts";
 import {PackageStatusOptions} from "../types/PackageStatus.ts";
 import {ClosedModal} from "../types/ClosedModal.ts";
 
-import PriceBanner from "@components/ham/PriceBanner.vue";
-import ShippingBanner from "@components/ham/ShippingBanner.vue";
 import TheBanner from "@components/shared/TheBanner.vue";
 import CustomerOrderDialog from "@components/ham/CustomerOrderDialog.vue";
 import OrdersSummaryDialog from "@components/ham/OrdersSummaryDialog.vue";
 import ShippingDialog from "@components/ham/ShippingDialog.vue"
 import ListBox from "@components/shared/ListBox.vue";
 import DeliveryBanner from "@components/ham/DeliveryBanner.vue";
+import TicketDialog from "@components/ham/TicketDialog.vue";
 
 import colorCSSM from "@css/utilities/colors.module.css";
 import textCSSM from "@css/utilities/text.module.css";
@@ -172,24 +167,31 @@ async function confirmPackage () {
 
 async function confirmArrived () {
   try {
-    const response = await open(<ShippingDialog price={props.packageData.shippingCost}/>)
-    if (response.reason === 'confirm' && response.value) {
+    const shippingResponse = await open(<ShippingDialog price={props.packageData.shippingCost}/>)
+    if (shippingResponse.reason === 'confirm' && shippingResponse.value) {
       try {
         const { data } = await api.patch(
             `packages/updatePackage/${props.packageData.id}`,
             {
-              shippingCost: response.value,
+              shippingCost: shippingResponse.value,
               status: PackageStatusOptions.Pending
             }
         )
-        packagesStore.updatePackageData({
-          packageId: props.packageData.id,
-          data
-        })
       } catch (e) {
         console.error(e)
       }
     }
+    const ticketResponse = await open(<TicketDialog/>)
+    if (ticketResponse.reason === 'confirm' && ticketResponse.value) {
+      console.log('Añadiremos el precio de cada jamón: ', ticketResponse.value)
+    }
+    packagesStore.updatePackageData({
+      packageId: props.packageData.id,
+      data: {
+        shippingCost: shippingResponse.value,
+        status: PackageStatusOptions.Pending
+      }
+    })
   } catch (e) {
     if (e !== ClosedModal) {
       console.log('Err')

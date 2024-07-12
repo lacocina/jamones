@@ -14,6 +14,7 @@ a {
 a,
 button {
   font-family: inherit;
+  font-weight: inherit;
   &:not(:disabled) {
     cursor: pointer;
   }
@@ -28,7 +29,7 @@ p {
 }
 
 body {
-  font-family: var(--body-font-family);
+  font-family: var(--body-font-family), sans-serif;
   font-weight: var(--body-font-weight);
   color: var(--body-font-color);
   background-color: var(--body-bgc-color);

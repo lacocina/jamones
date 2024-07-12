@@ -25,6 +25,11 @@
   composes: o-stack;
 }
 
+.lg {
+  --o-stack-current-size: var(--spacing-lg);
+  composes: o-stack;
+}
+
 .xl {
   --o-stack-current-size: var(--spacing-xl);
   composes: o-stack;

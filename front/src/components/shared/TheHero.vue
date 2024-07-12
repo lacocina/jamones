@@ -20,7 +20,7 @@
           <order-status v-if="status" :status="status"/>
         </div>
         <div>
-          <h2 :class="textCSSM.sizeBiggest">{{ title }}</h2>
+          <h2 :class="[textCSSM.sizeBiggest, uTextTransformCSSM.capitalizeFirstLetter]">{{ title }}</h2>
           <h4 v-if="subtitle" :class="[textCSSM.sizeSmall, textCSSM.light]">{{ subtitle }}</h4>
         </div>
       </div>
@@ -43,6 +43,9 @@ import cHeroCSSM from "@css/components/organisms/c-hero.module.css";
 import oFlexCSSM from "@css/objects/o-flex.module.css";
 import textCSSM from "@css/utilities/text.module.css";
 import uFlexDirectionCSSM from "@css/utilities/u-flex-direction.module.css";
+import uTextTransformCSSM from "@css/utilities/u-text-transform.module.css";
+import {format} from "date-fns";
+import {es} from "date-fns/locale";
 
 const route = useRoute()
 

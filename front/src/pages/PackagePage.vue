@@ -7,15 +7,27 @@
               :subtitle="subtitlePage"/>
 
     <opened-package v-if="currentPackage.status === PackageStatusOptions.Opened || currentPackage.status === PackageStatusOptions.OnTheWay"
-                    :packageData="currentPackage"/>
+                    :packageData="currentPackage">
+
+      <price-banner :package-id="currentPackage.id"
+                    v-model.number="currentPackage.hamPrice"/>
+
+    </opened-package>
 
     <pending-package v-if="currentPackage.status === PackageStatusOptions.Pending"
-                     :packageData="currentPackage"/>
+                     :packageData="currentPackage">
+
+      <price-banner :package-id="currentPackage.id"
+                    v-model.number="currentPackage.hamPrice"/>
+
+      <shipping-banner :package-id="currentPackage.id"
+                       v-model.number="currentPackage.shippingCost"/>
+
+    </pending-package>
 
     <closed-package v-if="currentPackage.status === PackageStatusOptions.Closed"
                     :packageData="currentPackage"
                     @order-update="handleOrderUpdate"/>
-
   </template>
 
 </template>
@@ -37,6 +49,8 @@ import TheHero from "@components/shared/TheHero.vue";
 import ClosedPackage from "./ClosedPackage.vue";
 import OpenedPackage from "./OpenedPackage.vue";
 import PendingPackage from "./PendingPackage.vue";
+import ShippingBanner from "@components/ham/ShippingBanner.vue";
+import PriceBanner from "@components/ham/PriceBanner.vue";
 
 const route = useRoute()
 const router = useRouter()
@@ -57,14 +71,8 @@ fetchPackageDetail()
 
 const titlePage = computed(() => {
   if (!currentPackage.value) return 'Paquete no encontrado'
-  if (currentPackage.value.status === PackageStatusOptions.Opened) {
+  if (currentPackage.value.status !== PackageStatusOptions.Closed) {
     return 'Pedido activo'
-  }
-  if (currentPackage.value.status === PackageStatusOptions.OnTheWay) {
-    return 'Pedido en camino'
-  }
-  if (currentPackage.value.status === PackageStatusOptions.Pending) {
-    return 'Pendiente de pago'
   }
   return format(currentPackage.value.dateReceived!, 'LLLL yyyy', {locale: es})
 })
