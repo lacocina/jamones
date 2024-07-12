@@ -59,21 +59,21 @@
   <shipping-banner :package-id="packageData.id"
                    v-model.number="packageData.shippingCost"/>
 
-  <the-banner v-if="isOnTheWay"
-              title="¿Ya ha llegado"
-              button-text="!Sí, ya ha llegado!"
-              @click="confirmArrived"
-              soft>
-    Si ya está aquí el jamón continua para apuntar a los que vayan pagando.
-  </the-banner>
-
-  <the-banner v-else
+  <the-banner v-if="!isOnTheWay"
               title="¿Ya está todo listo?"
               button-text="Confirmar pedido"
               @click="confirmPackage"
               :disabled="!packageData.orders?.length"
               soft>
     Si ya está todo preparado para pedir puedes continuar para indicar que el pedido está de camino.
+  </the-banner>
+
+  <the-banner v-else
+              title="¿Ya ha llegado"
+              button-text="!Sí, ya ha llegado!"
+              @click="confirmArrived"
+              soft>
+    Si ya está aquí el jamón continua para apuntar a los que vayan pagando.
   </the-banner>
 </template>
 
@@ -158,7 +158,10 @@ async function confirmPackage () {
           `packages/updatePackage/${props.packageData.id}`,
           { status: PackageStatusOptions.OnTheWay }
       )
-      console.log(data)
+      packagesStore.updatePackageData({
+        packageId: props.packageData.id,
+        data
+      })
     }
   } catch (e) {
     if (e !== ClosedModal) {
@@ -179,7 +182,10 @@ async function confirmArrived () {
               status: PackageStatusOptions.Pending
             }
         )
-        console.log(data)
+        packagesStore.updatePackageData({
+          packageId: props.packageData.id,
+          data
+        })
       } catch (e) {
         console.error(e)
       }

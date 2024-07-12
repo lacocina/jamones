@@ -72,7 +72,7 @@ const titlePage = computed(() => {
     return 'Pedido activo'
   }
   if (currentPackage.value.status === PackageStatusOptions.OnTheWay) {
-    return 'Pedido en camino'
+    return 'De camino'
   }
   if (currentPackage.value.status === PackageStatusOptions.Pending) {
     return 'Pendiente de pago'

@@ -50,6 +50,14 @@ export const usePackageStore = defineStore('packages', () => {
         return null
     }
 
+    function updatePackageData ({ packageId, data }: { packageId: number, data: any }) {
+        allPackageDetails.value.forEach((item: ResponsePackageDetail) => {
+            if (item.id === packageId) {
+                Object.assign(item, data)
+            }
+        })
+    }
+
     async function updateOrder(
         { packageId, customerId, lines }: { packageId: number, customerId: number, lines: number }
     ) {
@@ -76,7 +84,7 @@ export const usePackageStore = defineStore('packages', () => {
     async function deleteOrder(
         { orderId }: { orderId: number }
     ) {
-        await api.delete(`/packages/order/${orderId}`)
+        await api.delete(`/order/${orderId}`)
         const targetPackage = allPackageDetails.value.find((pack) => {
             return pack.id === currentPackage.value?.id
         })
@@ -97,6 +105,7 @@ export const usePackageStore = defineStore('packages', () => {
         currentPackage,
         fetchPackageDetail,
         fetchAllPackageDetails,
+        updatePackageData,
         updateOrder,
         deleteOrder
     }

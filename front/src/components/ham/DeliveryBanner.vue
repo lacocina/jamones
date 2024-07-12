@@ -2,7 +2,7 @@
   <section :class="[cBannerCSSM.soft, cBannerCSSM.reverseBorder]" class="delivery-banner">
     <LottieAnimation :animationData="lottieDelivery" :height="150" :width="150" no-margin/>
     <div :class="[oStackCSSM.xxs, uAlignContentCSSM.center]">
-      <h3>En camino</h3>
+      <h3>De camino</h3>
       <p :class="[colorCSSM.fontSoft, textCSSM.light]">
         Aún puedes cambiar la cantidad de jamones de los clientes.
       </p>

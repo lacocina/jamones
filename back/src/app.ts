@@ -1,6 +1,7 @@
 import fastify from "fastify";
 import { registerCustomersRoutes } from "./controllers/customers.ts";
 import { registerPackagesRoutes } from "./controllers/packages.ts";
+import {registerOrderRoutes} from "./controllers/order.ts";
 import { registerSwagger } from "./swagger.ts";
 import cors from "@fastify/cors";
 
@@ -12,6 +13,7 @@ if (!process.env.PROD) {
 app.register(cors, { origin: true })
 app.register(registerCustomersRoutes, { prefix: '/customers' })
 app.register(registerPackagesRoutes, { prefix: '/packages' })
+app.register(registerOrderRoutes, { prefix: '/orders' })
 
 app.put('/:id', {
   schema: {
